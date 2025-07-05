@@ -22,6 +22,19 @@ public abstract class AbstractSubsystem {
     private boolean running = true;
     private static final Logger LOGGER = Logger.getLogger(AbstractSubsystem.class.getName());
     
+    // Flush method
+    private void discardPreviousRequests(JMSConsumer consumer) {
+        Message msg;
+        int flushedCount = 0;
+        while ((msg = consumer.receiveNoWait()) != null) {
+            System.out.println("[INFO] " + getSubsystemName() + " - Flushed stale message: " + msg.getClass().getSimpleName());
+            flushedCount++;
+        }
+        if (flushedCount > 0) {
+            System.out.println("[INFO] " + getSubsystemName() + " - Total flushed messages: " + flushedCount);
+        }
+    }
+    
     public void start() {
         if (inputQueue == null) {
             System.err.println("[ERROR] " + getSubsystemName() + " - Input queue not set");
@@ -37,6 +50,9 @@ public abstract class AbstractSubsystem {
             JMSProducer producer = context.createProducer();
             
             System.out.println("[INFO] " + getSubsystemName() + " started listening for messages");
+            
+            // FLUSH
+            discardPreviousRequests(consumer);
             
             while (running) {
                 try {

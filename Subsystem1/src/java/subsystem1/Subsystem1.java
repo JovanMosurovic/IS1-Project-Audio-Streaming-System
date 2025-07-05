@@ -73,53 +73,61 @@ public class Subsystem1 extends AbstractSubsystem {
                     Korisnik korisnik = databaseUtil.getKorisnikById(korisnikId);
                     return korisnik;
                     
-                // CREATE/UPDATE operations - return success/failure message
+                // CREATE operations - return created objects
                 case Subsystem1Commands.CREATE_MESTO:
-                    if (parts.length < 2) return "ERROR: Missing mesto naziv";
+                    if (parts.length < 2) return null;
                     String naziv = parts[1];
-                    boolean mestoCreated = databaseUtil.createMesto(naziv);
-                    return mestoCreated ? "SUCCESS: Mesto '" + naziv + "' created successfully" 
-                                        : "ERROR: Failed to create mesto";
+                    Mesto createdMesto = databaseUtil.createMesto(naziv);
+                    if (createdMesto != null) {
+                        System.out.println("[INFO] Subsystem1 created mesto: " + naziv + " with ID: " + createdMesto.getMestoId());
+                    }
+                    return createdMesto;
                     
                 case Subsystem1Commands.CREATE_KORISNIK:
-                    if (parts.length < 6) return "ERROR: Missing korisnik parameters";
+                    if (parts.length < 6) return null;
                     String ime = parts[1];
                     String email = parts[2];
                     int godiste = Integer.parseInt(parts[3]);
                     String pol = parts[4];
                     int mestoIdForKorisnik = Integer.parseInt(parts[5]);
                     
-                    boolean korisnikCreated = databaseUtil.createKorisnik(ime, email, godiste, pol, mestoIdForKorisnik);
-                    return korisnikCreated ? "SUCCESS: Korisnik '" + ime + "' created successfully" 
-                                           : "ERROR: Failed to create korisnik";
+                    Korisnik createdKorisnik = databaseUtil.createKorisnik(ime, email, godiste, pol, mestoIdForKorisnik);
+                    if (createdKorisnik != null) {
+                        System.out.println("[INFO] Subsystem1 created korisnik: " + ime + " with ID: " + createdKorisnik.getKorisnikId());
+                    }
+                    return createdKorisnik;
                     
-                // UPDATE operations - return success/failure message
+                // UPDATE operations - return updated objects
                 case Subsystem1Commands.UPDATE_KORISNIK_EMAIL:
-                    if (parts.length < 3) return "ERROR: Missing parameters for email update";
+                    if (parts.length < 3) return null;
                     int korisnikIdForEmail = Integer.parseInt(parts[1]);
                     String newEmail = parts[2];
                     
-                    boolean emailUpdated = databaseUtil.updateKorisnikEmail(korisnikIdForEmail, newEmail);
-                    return emailUpdated ? "SUCCESS: Email updated successfully for korisnik ID " + korisnikIdForEmail
-                                        : "ERROR: Failed to update email (korisnik not found or email already exists)";
+                    Korisnik updatedKorisnik = databaseUtil.updateKorisnikEmail(korisnikIdForEmail, newEmail);
+                    if (updatedKorisnik != null) {
+                        System.out.println("[INFO] Subsystem1 updated email for korisnik ID: " + korisnikIdForEmail);
+                    }
+                    return updatedKorisnik;
                     
                 case Subsystem1Commands.UPDATE_KORISNIK_MESTO:
-                    if (parts.length < 3) return "ERROR: Missing parameters for mesto update";
+                    if (parts.length < 3) return null;
                     int korisnikIdForMesto = Integer.parseInt(parts[1]);
                     int newMestoId = Integer.parseInt(parts[2]);
                     
-                    boolean mestoUpdated = databaseUtil.updateKorisnikMesto(korisnikIdForMesto, newMestoId);
-                    return mestoUpdated ? "SUCCESS: Mesto updated successfully for korisnik ID " + korisnikIdForMesto
-                                        : "ERROR: Failed to update mesto (korisnik not found or mesto not found)";
+                    Korisnik updatedKorisnikMesto = databaseUtil.updateKorisnikMesto(korisnikIdForMesto, newMestoId);
+                    if (updatedKorisnikMesto != null) {
+                        System.out.println("[INFO] Subsystem1 updated mesto for korisnik ID: " + korisnikIdForMesto);
+                    }
+                    return updatedKorisnikMesto;
                     
                 default:
                     System.err.println("[ERROR] Subsystem1 - Unknown command: " + operation);
-                    return "ERROR: Unknown command: " + operation;
+                    return null;
             }
             
         } catch (Exception e) {
             System.err.println("[ERROR] Subsystem1 command handling error: " + e.getMessage());
-            return "ERROR: " + e.getMessage();
+            return null;
         }
     }
     
