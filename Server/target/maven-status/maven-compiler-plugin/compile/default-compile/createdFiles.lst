@@ -1,2 +1,6 @@
-server\JAXRSConfiguration.class
+command\Subsystem1Commands.class
+entities\Korisnik.class
+entities\Mesto.class
+util\JMSUtil.class
 server\resources\JavaEE8Resource.class
+server\JAXRSConfiguration.class
