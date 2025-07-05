@@ -91,6 +91,8 @@ public class DatabaseUtil {
     // CREATE operations
     public Mesto createMesto(String naziv) {
     try {
+        ensureTransactionClosed();
+        
         em.getTransaction().begin();
         
         Mesto mesto = new Mesto();
@@ -112,6 +114,8 @@ public class DatabaseUtil {
     
     public Korisnik createKorisnik(String ime, String email, int godiste, String pol, int mestoId) {
     try {
+        ensureTransactionClosed();
+        
         em.getTransaction().begin();
         
         // Check if mesto exists
@@ -225,6 +229,27 @@ public Korisnik updateKorisnikMesto(int korisnikId, int newMestoId) {
         }
         System.err.println("[ERROR] Error updating korisnik mesto: " + e.getMessage());
         return null;
+    }
+}
+
+private void ensureTransactionClosed() {
+    if (em.getTransaction().isActive()) {
+        try {
+            if (em.getTransaction().getRollbackOnly()) {
+                em.getTransaction().rollback();
+                System.out.println("[DEBUG] DatabaseUtil - Rolled back existing transaction");
+            } else {
+                em.getTransaction().commit();
+                System.out.println("[DEBUG] DatabaseUtil - Committed existing transaction");
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] DatabaseUtil - Error closing existing transaction: " + e.getMessage());
+            try {
+                em.getTransaction().rollback();
+            } catch (Exception rollbackEx) {
+                System.err.println("[ERROR] DatabaseUtil - Error during rollback: " + rollbackEx.getMessage());
+            }
+        }
     }
 }
     
