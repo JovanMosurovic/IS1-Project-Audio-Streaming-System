@@ -2,44 +2,16 @@ package entities;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 
-@Entity
-@Table(name = "mesto")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Mesto.findAll", query = "SELECT m FROM Mesto m"),
-    @NamedQuery(name = "Mesto.findByMestoId", query = "SELECT m FROM Mesto m WHERE m.mestoId = :mestoId"),
-    @NamedQuery(name = "Mesto.findByNaziv", query = "SELECT m FROM Mesto m WHERE m.naziv = :naziv")})
 public class Mesto implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "mesto_id")
+
     private Integer mestoId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "naziv")
+
     private String naziv;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mestoId")
+
     private List<Korisnik> korisnikList;
 
     public Mesto() {
@@ -70,7 +42,6 @@ public class Mesto implements Serializable {
         this.naziv = naziv;
     }
 
-    @XmlTransient
     public List<Korisnik> getKorisnikList() {
         return korisnikList;
     }

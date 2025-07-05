@@ -8,7 +8,6 @@ public class Main {
         Subsystem1 subsystem = new Subsystem1();
         subsystem.init();
         
-        // Add shutdown hook for graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("[INFO] Shutting down " + subsystem.getSubsystemName());
             subsystem.stop();

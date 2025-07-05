@@ -7,6 +7,8 @@ import entities.Mesto;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.jms.Queue;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 public class Subsystem1 extends AbstractSubsystem {
     
@@ -20,8 +22,19 @@ public class Subsystem1 extends AbstractSubsystem {
     }
     
     public void init() {
-        this.inputQueue = subsystem1Queue;
-        System.out.println("[INFO] Subsystem1 initialized");
+        try {
+            Context ctx = new InitialContext();
+            
+            subsystem1Queue = (Queue) ctx.lookup("subsystem1Queue");
+            
+            this.inputQueue = subsystem1Queue;
+            
+            System.out.println("[INFO] Subsystem1 initialized - JMS resources loaded");
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to initialize JMS resources: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize JMS resources", e);
+        }
     }
     
     @Override

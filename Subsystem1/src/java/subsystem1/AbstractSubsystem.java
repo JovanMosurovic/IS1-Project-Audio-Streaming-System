@@ -2,7 +2,6 @@ package subsystem1;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSConsumer;
@@ -13,12 +12,12 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.TextMessage;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 public abstract class AbstractSubsystem {
     
-    @Resource(lookup = "jms/__defaultConnectionFactory")
     private ConnectionFactory connectionFactory;
-    
     protected Queue inputQueue;
     private boolean running = true;
     private static final Logger LOGGER = Logger.getLogger(AbstractSubsystem.class.getName());
@@ -30,6 +29,9 @@ public abstract class AbstractSubsystem {
         }
         
         try {
+            Context ctx = new InitialContext();
+            connectionFactory = (ConnectionFactory) ctx.lookup("jms/__defaultConnectionFactory");
+            
             JMSContext context = connectionFactory.createContext();
             JMSConsumer consumer = context.createConsumer(inputQueue);
             JMSProducer producer = context.createProducer();
@@ -70,6 +72,7 @@ public abstract class AbstractSubsystem {
             responseMessage.setObject((java.io.Serializable) result);
             producer.send(replyTo, responseMessage);
             System.out.println("[INFO] " + getSubsystemName() + " sent response");
+            System.out.println("------------------------------------------------------");
         }
     }
     

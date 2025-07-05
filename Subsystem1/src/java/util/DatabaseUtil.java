@@ -40,7 +40,8 @@ public class DatabaseUtil {
     
     public List<Korisnik> getAllKorisnici() {
         try {
-            TypedQuery<Korisnik> query = em.createNamedQuery("Korisnik.findAll", Korisnik.class);
+            String jpql = "SELECT k FROM Korisnik k JOIN FETCH k.mestoId";
+            TypedQuery<Korisnik> query = em.createQuery(jpql, Korisnik.class);
             List<Korisnik> korisnici = query.getResultList();
             System.out.println("[INFO] Retrieved " + korisnici.size() + " korisnici from database");
             return korisnici;
@@ -67,13 +68,19 @@ public class DatabaseUtil {
     
     public Korisnik getKorisnikById(int korisnikId) {
         try {
-            Korisnik korisnik = em.find(Korisnik.class, korisnikId);
-            if (korisnik != null) {
+            String jpql = "SELECT k FROM Korisnik k JOIN FETCH k.mestoId WHERE k.korisnikId = :korisnikId";
+            TypedQuery<Korisnik> query = em.createQuery(jpql, Korisnik.class);
+            query.setParameter("korisnikId", korisnikId);
+            List<Korisnik> results = query.getResultList();
+            
+            if (!results.isEmpty()) {
+                Korisnik korisnik = results.get(0);
                 System.out.println("[INFO] Retrieved korisnik with ID: " + korisnikId);
+                return korisnik;
             } else {
                 System.out.println("[WARN] Korisnik with ID " + korisnikId + " not found");
+                return null;
             }
-            return korisnik;
         } catch (Exception e) {
             System.err.println("[ERROR] Error getting korisnik by ID " + korisnikId + ": " + e.getMessage());
             throw new RuntimeException("Error getting korisnik by ID", e);
