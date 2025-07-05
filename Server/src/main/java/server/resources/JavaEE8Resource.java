@@ -4,10 +4,12 @@ import util.JMSUtil;
 import command.Subsystem1Commands;
 import entities.Korisnik;
 import entities.Mesto;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -162,6 +164,71 @@ public class JavaEE8Resource {
         return Response.ok(korisnik).build();
     }
     
+    // Update korisnik email
+    @PUT
+    @Path("korisnik/{id}/email")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateKorisnikEmail(@PathParam("id") int korisnikId, Map<String, Object> request) {
+        System.out.println("[INFO] Server - PUT update korisnik email, ID: " + korisnikId + " -> Subsystem1");
+        
+        String email = (String) request.get("email");
+        if (email == null || email.trim().isEmpty()) {
+            return Response.status(400).entity("Email is required").build();
+        }
+        
+        String command = Subsystem1Commands.UPDATE_KORISNIK_EMAIL + ":" + korisnikId + ":" + email;
+        Object result = jmsUtil.sendCommandToSubsystem1(command);
+        
+        if (result == null) {
+            return Response.status(500).entity("Failed to update email").build();
+        }
+        
+        String resultStr = result.toString();
+        if (resultStr.startsWith("SUCCESS")) {
+            return Response.ok(resultStr).build();
+        } else if (resultStr.contains("not found")) {
+            return Response.status(404).entity(resultStr).build();
+        } else {
+            return Response.status(500).entity(resultStr).build();
+        }
+    }
+    
+    // Update korisnik mesto
+    @PUT
+    @Path("korisnik/{id}/mesto")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateKorisnikMesto(@PathParam("id") int korisnikId, Map<String, Object> request) {
+        System.out.println("[INFO] Server - PUT update korisnik mesto, ID: " + korisnikId + " -> Subsystem1");
+        
+        Object mestoIdObj = request.get("mestoId");
+        if (mestoIdObj == null) {
+            return Response.status(400).entity("Mesto ID is required").build();
+        }
+        
+        int mestoId = ((Number) mestoIdObj).intValue();
+        if (mestoId <= 0) {
+            return Response.status(400).entity("Valid Mesto ID is required").build();
+        }
+        
+        String command = Subsystem1Commands.UPDATE_KORISNIK_MESTO + ":" + korisnikId + ":" + mestoId;
+        Object result = jmsUtil.sendCommandToSubsystem1(command);
+        
+        if (result == null) {
+            return Response.status(500).entity("Failed to update mesto").build();
+        }
+        
+        String resultStr = result.toString();
+        if (resultStr.startsWith("SUCCESS")) {
+            return Response.ok(resultStr).build();
+        } else if (resultStr.contains("not found")) {
+            return Response.status(404).entity(resultStr).build();
+        } else {
+            return Response.status(500).entity(resultStr).build();
+        }
+    }
+    
     // Test endpoint
     @GET
     @Path("test/subsystem1")
@@ -177,9 +244,9 @@ public class JavaEE8Resource {
     }
     
     @POST
-@Path("test")
-@Produces(MediaType.TEXT_PLAIN)
-public Response testPost() {
-    return Response.ok("POST method works!").build();
-}
+    @Path("test")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response testPost() {
+        return Response.ok("POST method works!").build();
+    }
 }

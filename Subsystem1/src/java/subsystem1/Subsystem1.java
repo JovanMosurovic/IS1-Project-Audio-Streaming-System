@@ -93,13 +93,24 @@ public class Subsystem1 extends AbstractSubsystem {
                     return korisnikCreated ? "SUCCESS: Korisnik '" + ime + "' created successfully" 
                                            : "ERROR: Failed to create korisnik";
                     
+                // UPDATE operations - return success/failure message
                 case Subsystem1Commands.UPDATE_KORISNIK_EMAIL:
-                    // TODO: Implement email update
-                    return "SUCCESS: Email updated";
+                    if (parts.length < 3) return "ERROR: Missing parameters for email update";
+                    int korisnikIdForEmail = Integer.parseInt(parts[1]);
+                    String newEmail = parts[2];
+                    
+                    boolean emailUpdated = databaseUtil.updateKorisnikEmail(korisnikIdForEmail, newEmail);
+                    return emailUpdated ? "SUCCESS: Email updated successfully for korisnik ID " + korisnikIdForEmail
+                                        : "ERROR: Failed to update email (korisnik not found or email already exists)";
                     
                 case Subsystem1Commands.UPDATE_KORISNIK_MESTO:
-                    // TODO: Implement mesto update
-                    return "SUCCESS: Mesto updated";
+                    if (parts.length < 3) return "ERROR: Missing parameters for mesto update";
+                    int korisnikIdForMesto = Integer.parseInt(parts[1]);
+                    int newMestoId = Integer.parseInt(parts[2]);
+                    
+                    boolean mestoUpdated = databaseUtil.updateKorisnikMesto(korisnikIdForMesto, newMestoId);
+                    return mestoUpdated ? "SUCCESS: Mesto updated successfully for korisnik ID " + korisnikIdForMesto
+                                        : "ERROR: Failed to update mesto (korisnik not found or mesto not found)";
                     
                 default:
                     System.err.println("[ERROR] Subsystem1 - Unknown command: " + operation);

@@ -154,6 +154,84 @@ public class DatabaseUtil {
         }
     }
     
+    // UPDATE operations
+    public boolean updateKorisnikEmail(int korisnikId, String newEmail) {
+        try {
+            em.getTransaction().begin();
+            
+            // Check if korisnik exists
+            Korisnik korisnik = em.find(Korisnik.class, korisnikId);
+            if (korisnik == null) {
+                System.err.println("[ERROR] Korisnik with ID " + korisnikId + " not found");
+                return false;
+            }
+            
+            // Check if new email already exists (excluding current korisnik)
+            TypedQuery<Long> emailQuery = em.createQuery(
+                "SELECT COUNT(k) FROM Korisnik k WHERE k.email = :email AND k.korisnikId != :korisnikId", Long.class);
+            emailQuery.setParameter("email", newEmail);
+            emailQuery.setParameter("korisnikId", korisnikId);
+            Long emailCount = emailQuery.getSingleResult();
+            
+            if (emailCount > 0) {
+                System.err.println("[ERROR] Email " + newEmail + " already exists for another korisnik");
+                return false;
+            }
+            
+            // Update email
+            String oldEmail = korisnik.getEmail();
+            korisnik.setEmail(newEmail);
+            
+            em.merge(korisnik);
+            em.getTransaction().commit();
+            
+            System.out.println("[INFO] Updated korisnik " + korisnikId + " email from '" + oldEmail + "' to '" + newEmail + "'");
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("[ERROR] Error updating korisnik email: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean updateKorisnikMesto(int korisnikId, int newMestoId) {
+        try {
+            em.getTransaction().begin();
+            
+            // Check if korisnik exists
+            Korisnik korisnik = em.find(Korisnik.class, korisnikId);
+            if (korisnik == null) {
+                System.err.println("[ERROR] Korisnik with ID " + korisnikId + " not found");
+                return false;
+            }
+            
+            // Check if new mesto exists
+            Mesto newMesto = em.find(Mesto.class, newMestoId);
+            if (newMesto == null) {
+                System.err.println("[ERROR] Mesto with ID " + newMestoId + " not found");
+                return false;
+            }
+            
+            // Update mesto
+            String oldMestoNaziv = korisnik.getMestoId().getNaziv();
+            korisnik.setMestoId(newMesto);
+            
+            em.merge(korisnik);
+            em.getTransaction().commit();
+            
+            System.out.println("[INFO] Updated korisnik " + korisnikId + " mesto from '" + oldMestoNaziv + "' to '" + newMesto.getNaziv() + "'");
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("[ERROR] Error updating korisnik mesto: " + e.getMessage());
+            return false;
+        }
+    }
+    
     public void close() {
         if (em != null) {
             em.close();
