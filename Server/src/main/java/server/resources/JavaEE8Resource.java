@@ -1,9 +1,8 @@
 package server.resources;
 
-import util.JMSUtil;
-import command.Subsystem1Commands;
-import entities.Korisnik;
-import entities.Mesto;
+import util.Subsystem1Util;
+import util.Subsystem2Util;
+import util.Subsystem3Util;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -19,8 +18,15 @@ import javax.ws.rs.core.Response;
 
 @Path("")
 public class JavaEE8Resource {
+    
     @Inject
-    private JMSUtil jmsUtil;
+    private Subsystem1Util subsystem1Util;
+    
+    @Inject
+    private Subsystem2Util subsystem2Util;
+    
+    @Inject
+    private Subsystem3Util subsystem3Util;
     
     @GET
     public Response ping() {
@@ -28,225 +34,80 @@ public class JavaEE8Resource {
         return Response.ok("Server is running").build();
     }
     
-    // Create new mesto
+    // ============== SUBSYSTEM 1 ENDPOINTS ==============
+    
     @POST
     @Path("mesto")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createMesto(Mesto mesto) {
-        System.out.println("[INFO] Server - POST create mesto: " + mesto.getNaziv() + " -> Subsystem1");
-        
-        if (mesto.getNaziv() == null || mesto.getNaziv().trim().isEmpty()) {
-            return Response.status(400).entity("Mesto naziv is required").build();
-        }
-        
-        String command = Subsystem1Commands.CREATE_MESTO + ":" + mesto.getNaziv();
-        Object result = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (result == null) {
-            return Response.status(500).entity("Failed to create mesto").build();
-        }
-        
-        String resultStr = result.toString();
-        if (resultStr.startsWith("SUCCESS")) {
-            return Response.status(201).entity(resultStr).build();
-        } else {
-            return Response.status(500).entity(resultStr).build();
-        }
+    public Response createMesto(Map<String, Object> request) {
+        return subsystem1Util.createMesto(request);
     }
     
-    // Create new korisnik
-    @POST
-    @Path("korisnik")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createKorisnik(Korisnik korisnik) {
-        System.out.println("[INFO] Server - POST create korisnik: " + korisnik.getIme() + " -> Subsystem1");
-        
-        // Validate required fields
-        if (korisnik.getIme() == null || korisnik.getIme().trim().isEmpty()) {
-            return Response.status(400).entity("Korisnik ime is required").build();
-        }
-        if (korisnik.getEmail() == null || korisnik.getEmail().trim().isEmpty()) {
-            return Response.status(400).entity("Korisnik email is required").build();
-        }
-        if (korisnik.getGodiste() <= 0) {
-            return Response.status(400).entity("Korisnik godiste is required").build();
-        }
-        if (korisnik.getPol() == null || korisnik.getPol().trim().isEmpty()) {
-            return Response.status(400).entity("Korisnik pol is required").build();
-        }
-        if (korisnik.getMestoId() == null || korisnik.getMestoId().getMestoId() == null) {
-            return Response.status(400).entity("Korisnik mesto_id is required").build();
-        }
-        
-        // Create command with all parameters
-        String command = Subsystem1Commands.CREATE_KORISNIK + ":" + 
-                        korisnik.getIme() + ":" + 
-                        korisnik.getEmail() + ":" + 
-                        korisnik.getGodiste() + ":" + 
-                        korisnik.getPol() + ":" + 
-                        korisnik.getMestoId().getMestoId();
-        
-        Object result = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (result == null) {
-            return Response.status(500).entity("Failed to create korisnik").build();
-        }
-        
-        String resultStr = result.toString();
-        if (resultStr.startsWith("SUCCESS")) {
-            return Response.status(201).entity(resultStr).build();
-        } else {
-            return Response.status(500).entity(resultStr).build();
-        }
-    }
-    
-    // Get all mesta
     @GET
     @Path("mesto")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllMesta() {
-        System.out.println("[INFO] Server - GET all mesta request -> Subsystem1");
-        Object mesta = jmsUtil.sendCommandToSubsystem1(Subsystem1Commands.GET_ALL_MESTA);
-        
-        if (mesta == null) {
-            return Response.status(404).entity("No data received").build();
-        }
-        
-        return Response.ok(mesta).build();
+        return subsystem1Util.getAllMesta();
     }
     
-    // Get all korisnici
-    @GET
-    @Path("korisnik")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllKorisnici() {
-        System.out.println("[INFO] Server - GET all korisnici request -> Subsystem1");
-        Object korisnici = jmsUtil.sendCommandToSubsystem1(Subsystem1Commands.GET_ALL_KORISNICI);
-        
-        if (korisnici == null) {
-            return Response.status(404).entity("No data received").build();
-        }
-        
-        return Response.ok(korisnici).build();
-    }
-    
-    // Get mesto by ID
     @GET
     @Path("mesto/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMestoById(@PathParam("id") int mestoId) {
-        System.out.println("[INFO] Server - GET mesto by ID: " + mestoId + " -> Subsystem1");
-        String command = Subsystem1Commands.GET_MESTO_BY_ID + ":" + mestoId;
-        Object mesto = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (mesto == null) {
-            return Response.status(404).entity("Mesto not found").build();
-        }
-        
-        return Response.ok(mesto).build();
+        return subsystem1Util.getMestoById(mestoId);
     }
     
-    // Get korisnik by ID
+    @POST
+    @Path("korisnik")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createKorisnik(Map<String, Object> request) {
+        return subsystem1Util.createKorisnik(request);
+    }
+    
+    @GET
+    @Path("korisnik")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllKorisnici() {
+        return subsystem1Util.getAllKorisnici();
+    }
+    
     @GET
     @Path("korisnik/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKorisnikById(@PathParam("id") int korisnikId) {
-        System.out.println("[INFO] Server - GET korisnik by ID: " + korisnikId + " -> Subsystem1");
-        String command = Subsystem1Commands.GET_KORISNIK_BY_ID + ":" + korisnikId;
-        Object korisnik = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (korisnik == null) {
-            return Response.status(404).entity("Korisnik not found").build();
-        }
-        
-        return Response.ok(korisnik).build();
+        return subsystem1Util.getKorisnikById(korisnikId);
     }
     
-    // Update korisnik email
     @PUT
     @Path("korisnik/{id}/email")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateKorisnikEmail(@PathParam("id") int korisnikId, Map<String, Object> request) {
-        System.out.println("[INFO] Server - PUT update korisnik email, ID: " + korisnikId + " -> Subsystem1");
-        
-        String email = (String) request.get("email");
-        if (email == null || email.trim().isEmpty()) {
-            return Response.status(400).entity("Email is required").build();
-        }
-        
-        String command = Subsystem1Commands.UPDATE_KORISNIK_EMAIL + ":" + korisnikId + ":" + email;
-        Object result = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (result == null) {
-            return Response.status(500).entity("Failed to update email").build();
-        }
-        
-        String resultStr = result.toString();
-        if (resultStr.startsWith("SUCCESS")) {
-            return Response.ok(resultStr).build();
-        } else if (resultStr.contains("not found")) {
-            return Response.status(404).entity(resultStr).build();
-        } else {
-            return Response.status(500).entity(resultStr).build();
-        }
+        return subsystem1Util.updateKorisnikEmail(korisnikId, request);
     }
     
-    // Update korisnik mesto
     @PUT
     @Path("korisnik/{id}/mesto")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateKorisnikMesto(@PathParam("id") int korisnikId, Map<String, Object> request) {
-        System.out.println("[INFO] Server - PUT update korisnik mesto, ID: " + korisnikId + " -> Subsystem1");
-        
-        Object mestoIdObj = request.get("mestoId");
-        if (mestoIdObj == null) {
-            return Response.status(400).entity("Mesto ID is required").build();
-        }
-        
-        int mestoId = ((Number) mestoIdObj).intValue();
-        if (mestoId <= 0) {
-            return Response.status(400).entity("Valid Mesto ID is required").build();
-        }
-        
-        String command = Subsystem1Commands.UPDATE_KORISNIK_MESTO + ":" + korisnikId + ":" + mestoId;
-        Object result = jmsUtil.sendCommandToSubsystem1(command);
-        
-        if (result == null) {
-            return Response.status(500).entity("Failed to update mesto").build();
-        }
-        
-        String resultStr = result.toString();
-        if (resultStr.startsWith("SUCCESS")) {
-            return Response.ok(resultStr).build();
-        } else if (resultStr.contains("not found")) {
-            return Response.status(404).entity(resultStr).build();
-        } else {
-            return Response.status(500).entity(resultStr).build();
-        }
+        return subsystem1Util.updateKorisnikMesto(korisnikId, request);
     }
     
-    // Test endpoint
     @GET
     @Path("test/subsystem1")
     public Response testSubsystem1() {
-        System.out.println("[INFO] Server - Test Subsystem1");
-        Object response = jmsUtil.sendCommandToSubsystem1(Subsystem1Commands.TEST_MESSAGE);
-        
-        if (response == null) {
-            return Response.status(404).entity("No response").build();
-        }
-        
-        return Response.ok(response).build();
+        return subsystem1Util.testSubsystem1();
     }
     
-    @POST
-    @Path("test")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response testPost() {
-        return Response.ok("POST method works!").build();
-    }
+    // ============== SUBSYSTEM 2 ENDPOINTS ==============
+    
+    //
+    
+    // ============== SUBSYSTEM 3 ENDPOINTS ==============
+    
+    //
+    
 }
