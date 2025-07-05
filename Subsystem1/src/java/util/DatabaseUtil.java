@@ -26,6 +26,7 @@ public class DatabaseUtil {
         }
     }
     
+    // GET operations
     public List<Mesto> getAllMesta() {
         try {
             TypedQuery<Mesto> query = em.createNamedQuery("Mesto.findAll", Mesto.class);
@@ -84,6 +85,72 @@ public class DatabaseUtil {
         } catch (Exception e) {
             System.err.println("[ERROR] Error getting korisnik by ID " + korisnikId + ": " + e.getMessage());
             throw new RuntimeException("Error getting korisnik by ID", e);
+        }
+    }
+    
+    // CREATE operations
+    public boolean createMesto(String naziv) {
+        try {
+            em.getTransaction().begin();
+            
+            Mesto mesto = new Mesto();
+            mesto.setNaziv(naziv);
+            
+            em.persist(mesto);
+            em.getTransaction().commit();
+            
+            System.out.println("[INFO] Created new mesto: " + naziv);
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("[ERROR] Error creating mesto: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean createKorisnik(String ime, String email, int godiste, String pol, int mestoId) {
+        try {
+            em.getTransaction().begin();
+            
+            // Check if mesto exists
+            Mesto mesto = em.find(Mesto.class, mestoId);
+            if (mesto == null) {
+                System.err.println("[ERROR] Mesto with ID " + mestoId + " not found");
+                return false;
+            }
+            
+            // Check if email already exists
+            TypedQuery<Long> emailQuery = em.createQuery(
+                "SELECT COUNT(k) FROM Korisnik k WHERE k.email = :email", Long.class);
+            emailQuery.setParameter("email", email);
+            Long emailCount = emailQuery.getSingleResult();
+            
+            if (emailCount > 0) {
+                System.err.println("[ERROR] Email " + email + " already exists");
+                return false;
+            }
+            
+            // Create new korisnik
+            Korisnik korisnik = new Korisnik();
+            korisnik.setIme(ime);
+            korisnik.setEmail(email);
+            korisnik.setGodiste(godiste);
+            korisnik.setPol(pol);
+            korisnik.setMestoId(mesto);
+            
+            em.persist(korisnik);
+            em.getTransaction().commit();
+            
+            System.out.println("[INFO] Created new korisnik: " + ime + " (" + email + ")");
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("[ERROR] Error creating korisnik: " + e.getMessage());
+            return false;
         }
     }
     

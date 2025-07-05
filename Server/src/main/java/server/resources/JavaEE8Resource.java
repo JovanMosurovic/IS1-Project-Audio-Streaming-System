@@ -2,8 +2,12 @@ package server.resources;
 
 import util.JMSUtil;
 import command.Subsystem1Commands;
+import entities.Korisnik;
+import entities.Mesto;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +24,80 @@ public class JavaEE8Resource {
     public Response ping() {
         System.out.println("[INFO] Server - Ping request received");
         return Response.ok("Server is running").build();
+    }
+    
+    // Create new mesto
+    @POST
+    @Path("mesto")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createMesto(Mesto mesto) {
+        System.out.println("[INFO] Server - POST create mesto: " + mesto.getNaziv() + " -> Subsystem1");
+        
+        if (mesto.getNaziv() == null || mesto.getNaziv().trim().isEmpty()) {
+            return Response.status(400).entity("Mesto naziv is required").build();
+        }
+        
+        String command = Subsystem1Commands.CREATE_MESTO + ":" + mesto.getNaziv();
+        Object result = jmsUtil.sendCommandToSubsystem1(command);
+        
+        if (result == null) {
+            return Response.status(500).entity("Failed to create mesto").build();
+        }
+        
+        String resultStr = result.toString();
+        if (resultStr.startsWith("SUCCESS")) {
+            return Response.status(201).entity(resultStr).build();
+        } else {
+            return Response.status(500).entity(resultStr).build();
+        }
+    }
+    
+    // Create new korisnik
+    @POST
+    @Path("korisnik")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createKorisnik(Korisnik korisnik) {
+        System.out.println("[INFO] Server - POST create korisnik: " + korisnik.getIme() + " -> Subsystem1");
+        
+        // Validate required fields
+        if (korisnik.getIme() == null || korisnik.getIme().trim().isEmpty()) {
+            return Response.status(400).entity("Korisnik ime is required").build();
+        }
+        if (korisnik.getEmail() == null || korisnik.getEmail().trim().isEmpty()) {
+            return Response.status(400).entity("Korisnik email is required").build();
+        }
+        if (korisnik.getGodiste() <= 0) {
+            return Response.status(400).entity("Korisnik godiste is required").build();
+        }
+        if (korisnik.getPol() == null || korisnik.getPol().trim().isEmpty()) {
+            return Response.status(400).entity("Korisnik pol is required").build();
+        }
+        if (korisnik.getMestoId() == null || korisnik.getMestoId().getMestoId() == null) {
+            return Response.status(400).entity("Korisnik mesto_id is required").build();
+        }
+        
+        // Create command with all parameters
+        String command = Subsystem1Commands.CREATE_KORISNIK + ":" + 
+                        korisnik.getIme() + ":" + 
+                        korisnik.getEmail() + ":" + 
+                        korisnik.getGodiste() + ":" + 
+                        korisnik.getPol() + ":" + 
+                        korisnik.getMestoId().getMestoId();
+        
+        Object result = jmsUtil.sendCommandToSubsystem1(command);
+        
+        if (result == null) {
+            return Response.status(500).entity("Failed to create korisnik").build();
+        }
+        
+        String resultStr = result.toString();
+        if (resultStr.startsWith("SUCCESS")) {
+            return Response.status(201).entity(resultStr).build();
+        } else {
+            return Response.status(500).entity(resultStr).build();
+        }
     }
     
     // Get all mesta
@@ -97,4 +175,11 @@ public class JavaEE8Resource {
         
         return Response.ok(response).build();
     }
+    
+    @POST
+@Path("test")
+@Produces(MediaType.TEXT_PLAIN)
+public Response testPost() {
+    return Response.ok("POST method works!").build();
+}
 }

@@ -75,12 +75,23 @@ public class Subsystem1 extends AbstractSubsystem {
                     
                 // CREATE/UPDATE operations - return success/failure message
                 case Subsystem1Commands.CREATE_MESTO:
-                    // TODO: Implement mesto creation
-                    return "SUCCESS: Mesto created";
+                    if (parts.length < 2) return "ERROR: Missing mesto naziv";
+                    String naziv = parts[1];
+                    boolean mestoCreated = databaseUtil.createMesto(naziv);
+                    return mestoCreated ? "SUCCESS: Mesto '" + naziv + "' created successfully" 
+                                        : "ERROR: Failed to create mesto";
                     
                 case Subsystem1Commands.CREATE_KORISNIK:
-                    // TODO: Implement korisnik creation
-                    return "SUCCESS: Korisnik created";
+                    if (parts.length < 6) return "ERROR: Missing korisnik parameters";
+                    String ime = parts[1];
+                    String email = parts[2];
+                    int godiste = Integer.parseInt(parts[3]);
+                    String pol = parts[4];
+                    int mestoIdForKorisnik = Integer.parseInt(parts[5]);
+                    
+                    boolean korisnikCreated = databaseUtil.createKorisnik(ime, email, godiste, pol, mestoIdForKorisnik);
+                    return korisnikCreated ? "SUCCESS: Korisnik '" + ime + "' created successfully" 
+                                           : "ERROR: Failed to create korisnik";
                     
                 case Subsystem1Commands.UPDATE_KORISNIK_EMAIL:
                     // TODO: Implement email update
