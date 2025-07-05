@@ -14,12 +14,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 
 @Entity
 @Table(name = "korisnik")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Korisnik.findAll", query = "SELECT k FROM Korisnik k")})
 public class Korisnik implements Serializable {

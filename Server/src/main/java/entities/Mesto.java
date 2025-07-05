@@ -9,10 +9,7 @@ public class Mesto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer mestoId;
-
     private String naziv;
-
-    private List<Korisnik> korisnikList;
 
     public Mesto() {
     }
@@ -40,14 +37,6 @@ public class Mesto implements Serializable {
 
     public void setNaziv(String naziv) {
         this.naziv = naziv;
-    }
-
-    public List<Korisnik> getKorisnikList() {
-        return korisnikList;
-    }
-
-    public void setKorisnikList(List<Korisnik> korisnikList) {
-        this.korisnikList = korisnikList;
     }
 
     @Override
