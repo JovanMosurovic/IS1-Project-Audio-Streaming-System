@@ -26,7 +26,6 @@ public class Subsystem1 extends AbstractSubsystem {
             Context ctx = new InitialContext();
 
             subsystem1Queue = (Queue) ctx.lookup("subsystem1Queue");
-
             this.inputQueue = subsystem1Queue;
 
             System.out.println("[INFO] Subsystem1 initialized - JMS resources loaded");
@@ -41,10 +40,6 @@ public class Subsystem1 extends AbstractSubsystem {
     public Object handleCommand(String command) {
         try {
             System.out.println("[INFO] Subsystem1 handling command: " + command);
-
-            if (command.equals(Subsystem1Commands.TEST_MESSAGE)) {
-                return "SUCCESS: Test message received by " + getSubsystemName();
-            }
 
             String[] parts = command.split(":");
             String operation = parts[0];

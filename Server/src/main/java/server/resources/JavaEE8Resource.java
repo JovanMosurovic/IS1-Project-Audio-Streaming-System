@@ -96,12 +96,6 @@ public class JavaEE8Resource {
         return subsystem1Util.updateKorisnikMesto(korisnikId, request);
     }
     
-    @GET
-    @Path("test/subsystem1")
-    public Response testSubsystem1() {
-        return subsystem1Util.testSubsystem1();
-    }
-    
     // ============== SUBSYSTEM 2 ENDPOINTS ==============
     
     //

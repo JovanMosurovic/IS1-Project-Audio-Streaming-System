@@ -187,8 +187,4 @@ public class Subsystem1Util {
         return Response.status(500).entity("Unexpected response type: " + result.getClass().getName()).build();
     }
 
-    public Response testSubsystem1() {
-        Object response = jmsUtil.sendCommandToSubsystem1(Subsystem1Commands.TEST_MESSAGE);
-        return response == null ? Response.status(500).entity("No response from subsystem1").build() : Response.ok(response).build();
-    }
 }
