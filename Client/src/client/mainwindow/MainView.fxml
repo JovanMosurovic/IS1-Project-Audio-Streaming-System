@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane styleClass="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="client.mainwindow.MainController"
+            prefWidth="1400" prefHeight="900" minWidth="1000" minHeight="700">
+    
+    <top>
+        <VBox spacing="12" styleClass="header-container">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+            
+            <!-- Main request bar -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="request-bar">
+                <ComboBox fx:id="methodComboBox" styleClass="method-combo" 
+                          prefWidth="100" minWidth="80" maxWidth="120"/>
+                <TextField fx:id="urlTextField" styleClass="url-input" 
+                           HBox.hgrow="ALWAYS" prefWidth="400"/>
+                <Button fx:id="sendButton" text="Send" styleClass="send-button"
+                        prefWidth="100" minWidth="80" maxWidth="120"/>
+            </HBox>
+            
+            <!-- Preset selection -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="preset-bar">
+                <Label text="Presets:" styleClass="preset-label"/>
+                <ComboBox fx:id="presetComboBox" styleClass="preset-combo"
+                          prefWidth="350" minWidth="250" maxWidth="500"
+                          HBox.hgrow="ALWAYS"/>
+            </HBox>
+            
+            <!-- Filter buttons -->
+            <VBox spacing="8">
+                <Label text="Filter by Method:" styleClass="filter-label"/>
+                <HBox fx:id="filterContainer" spacing="8" styleClass="filter-container"/>
+            </VBox>
+            
+            <!-- Action buttons -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="action-bar">
+                <Button fx:id="clearButton" text="Clear All" styleClass="secondary-button"/>
+                <Button fx:id="formatButton" text="Format JSON" styleClass="secondary-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox fx:id="statusBox" spacing="12" alignment="CENTER_RIGHT">
+                    <Label fx:id="statusLabel" styleClass="status-label"/>
+                    <Label fx:id="timeLabel" styleClass="time-label"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.4" orientation="VERTICAL" styleClass="main-split">
+            <!-- Request section -->
+            <VBox spacing="12" styleClass="request-section" alignment="TOP_LEFT">
+                <padding>
+                    <Insets top="12" right="12" bottom="12" left="12"/>
+                </padding>
+                <Label text="Request" styleClass="section-title"/>
+                
+                <TabPane styleClass="request-tabs">
+                    <tabs>
+                        <Tab text="Body" closable="false">
+                            <VBox spacing="6">
+                                <Label text="JSON Body:" styleClass="field-label"/>
+                                <TextArea fx:id="requestBodyTextArea" 
+                                         styleClass="json-editor" 
+                                         prefHeight="200" 
+                                         wrapText="true"/>
+                            </VBox>
+                        </Tab>
+                        <Tab text="Headers" closable="false">
+                            <VBox spacing="6">
+                                <Label text="Headers (key: value):" styleClass="field-label"/>
+                                <TextArea fx:id="requestHeadersTextArea" 
+                                         styleClass="headers-editor" 
+                                         prefHeight="200" 
+                                         wrapText="true"
+                                         promptText="Content-Type: application/json&#10;Authorization: Bearer token"/>
+                            </VBox>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </VBox>
+            
+            <!-- Response section -->
+            <VBox fx:id="responseContainer" spacing="12" styleClass="response-section" alignment="TOP_LEFT">
+                <padding>
+                    <Insets top="12" right="12" bottom="12" left="12"/>
+                </padding>
+                <Label text="Response" styleClass="section-title"/>
+                
+                <TabPane fx:id="responseTabPane" styleClass="response-tabs">
+                    <tabs>
+                        <Tab text="Body" closable="false">
+                            <VBox spacing="6">
+                                <TextArea fx:id="responseBodyTextArea" 
+                                         styleClass="json-viewer" 
+                                         editable="false" 
+                                         prefHeight="300" 
+                                         wrapText="true"/>
+                            </VBox>
+                        </Tab>
+                        <Tab text="Headers" closable="false">
+                            <VBox spacing="6">
+                                <TextArea fx:id="responseHeadersTextArea" 
+                                         styleClass="headers-viewer" 
+                                         editable="false" 
+                                         prefHeight="300" 
+                                         wrapText="true"/>
+                            </VBox>
+                        </Tab>
+                        <Tab text="Info" closable="false">
+                            <VBox spacing="6">
+                                <Label fx:id="requestInfoLabel" 
+                                       styleClass="info-label" 
+                                       text="Request details will appear here..."
+                                       wrapText="true"/>
+                            </VBox>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </VBox>
+        </SplitPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="footer">
+            <padding>
+                <Insets top="12" right="16" bottom="12" left="16"/>
+            </padding>
+            <Label fx:id="createdByLabel" styleClass="footer-label"/>
+        </HBox>
+    </bottom>
+</BorderPane>

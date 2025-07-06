@@ -1,0 +1,642 @@
+/* Global styles */
+.root {
+    -fx-background-color: #f8fafc;
+    -fx-text-fill: #1e293b;
+    -fx-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-smoothing-type: lcd;
+}
+
+/* Header container */
+.header-container {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+}
+
+/* Request bar */
+.request-bar {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 12;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Method combo box - kompletan fix za prikaz teksta */
+.method-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+    -fx-padding: 12 16;
+    -fx-min-height: 44px;
+    -fx-pref-height: 44px;
+    -fx-max-height: 44px;
+    -fx-text-fill: #1e293b;
+}
+
+.method-combo .list-cell {
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: inherit;
+    -fx-background-color: transparent;
+}
+
+.method-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.method-combo .arrow-button .arrow {
+    -fx-background-color: #64748b;
+}
+
+.method-combo:hover {
+    -fx-border-color: #94a3b8;
+}
+
+.method-combo.method-get {
+    -fx-background-color: #dcfce7;
+    -fx-border-color: #16a34a;
+    -fx-text-fill: #15803d;
+}
+
+.method-combo.method-get .list-cell {
+    -fx-text-fill: #15803d;
+}
+
+.method-combo.method-post {
+    -fx-background-color: #fef3c7;
+    -fx-border-color: #f59e0b;
+    -fx-text-fill: #d97706;
+}
+
+.method-combo.method-post .list-cell {
+    -fx-text-fill: #d97706;
+}
+
+.method-combo.method-put {
+    -fx-background-color: #dbeafe;
+    -fx-border-color: #3b82f6;
+    -fx-text-fill: #1d4ed8;
+}
+
+.method-combo.method-put .list-cell {
+    -fx-text-fill: #1d4ed8;
+}
+
+.method-combo.method-delete {
+    -fx-background-color: #fee2e2;
+    -fx-border-color: #ef4444;
+    -fx-text-fill: #dc2626;
+}
+
+.method-combo.method-delete .list-cell {
+    -fx-text-fill: #dc2626;
+}
+
+/* URL input - jednaka visina kao method combo */
+.url-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12 16;
+    -fx-font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+    -fx-font-size: 14px;
+    -fx-min-height: 44px;
+    -fx-pref-height: 44px;
+    -fx-max-height: 44px;
+}
+
+.url-input:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+}
+
+.url-input:hover {
+    -fx-border-color: #94a3b8;
+}
+
+/* Send button - boldovan tekst */
+.send-button {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-min-height: 44px;
+    -fx-pref-height: 44px;
+    -fx-max-height: 44px;
+}
+
+.send-button:hover {
+    -fx-background-color: #2563eb;
+    -fx-border-color: #2563eb;
+}
+
+.send-button:pressed {
+    -fx-background-color: #1d4ed8;
+    -fx-border-color: #1d4ed8;
+}
+
+.send-button:disabled {
+    -fx-background-color: #94a3b8;
+    -fx-border-color: #94a3b8;
+    -fx-text-fill: #ffffff;
+    -fx-opacity: 0.7;
+}
+
+/* Method-specific send button styles */
+.send-button.method-get {
+    -fx-background-color: #16a34a;
+    -fx-border-color: #16a34a;
+}
+
+.send-button.method-get:hover {
+    -fx-background-color: #15803d;
+    -fx-border-color: #15803d;
+}
+
+.send-button.method-post {
+    -fx-background-color: #f59e0b;
+    -fx-border-color: #f59e0b;
+}
+
+.send-button.method-post:hover {
+    -fx-background-color: #d97706;
+    -fx-border-color: #d97706;
+}
+
+.send-button.method-put {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+}
+
+.send-button.method-put:hover {
+    -fx-background-color: #2563eb;
+    -fx-border-color: #2563eb;
+}
+
+.send-button.method-delete {
+    -fx-background-color: #ef4444;
+    -fx-border-color: #ef4444;
+}
+
+.send-button.method-delete:hover {
+    -fx-background-color: #dc2626;
+    -fx-border-color: #dc2626;
+}
+
+/* Preset bar */
+.preset-bar {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 6;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-padding: 8 12;
+}
+
+.preset-label {
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+    -fx-font-size: 13px;
+}
+
+.preset-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+}
+
+.preset-combo:hover {
+    -fx-border-color: #94a3b8;
+}
+
+.preset-combo:showing {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+}
+
+/* Filter section */
+.filter-label {
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+    -fx-font-size: 13px;
+}
+
+.filter-container {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 6;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-padding: 8;
+}
+
+.filter-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-text-fill: #64748b;
+}
+
+.filter-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.filter-button.active {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #1e293b;
+    -fx-text-fill: #ffffff;
+}
+
+.filter-button.filter-get.active {
+    -fx-background-color: #16a34a;
+    -fx-border-color: #16a34a;
+}
+
+.filter-button.filter-post.active {
+    -fx-background-color: #f59e0b;
+    -fx-border-color: #f59e0b;
+}
+
+.filter-button.filter-put.active {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+}
+
+.filter-button.filter-delete.active {
+    -fx-background-color: #ef4444;
+    -fx-border-color: #ef4444;
+}
+
+/* Action bar */
+.action-bar {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 6;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-padding: 8 12;
+}
+
+.secondary-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-cursor: hand;
+    -fx-text-fill: #64748b;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #94a3b8;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #e2e8f0;
+}
+
+/* Status labels */
+.status-label {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #64748b;
+}
+
+.status-label.status-success {
+    -fx-background-color: #dcfce7;
+    -fx-border-color: #16a34a;
+    -fx-text-fill: #15803d;
+}
+
+.status-label.status-error {
+    -fx-background-color: #fee2e2;
+    -fx-border-color: #ef4444;
+    -fx-text-fill: #dc2626;
+}
+
+.status-label.status-warning {
+    -fx-background-color: #fef3c7;
+    -fx-border-color: #f59e0b;
+    -fx-text-fill: #d97706;
+}
+
+.time-label {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #64748b;
+}
+
+/* Main split pane */
+.main-split {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 8;
+}
+
+.main-split .split-pane-divider {
+    -fx-background-color: #cbd5e1;
+    -fx-padding: 1;
+}
+
+/* Section styles - poboljšani dizajn */
+.request-section, .response-section {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 6, 0, 0, 2);
+}
+
+.section-title {
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: 600;
+    -fx-font-size: 18px;
+    -fx-padding: 0 0 8 0;
+}
+
+.field-label {
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+    -fx-font-size: 13px;
+}
+
+/* Tab panes - moderan dizajn bez sivog */
+.request-tabs, .response-tabs {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 0 0 12 12;
+    -fx-background-radius: 0 0 12 12;
+}
+
+.request-tabs .tab-header-area, .response-tabs .tab-header-area {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0 16 0 16;
+}
+
+.request-tabs .tab-header-background, .response-tabs .tab-header-background {
+    -fx-background-color: #ffffff;
+}
+
+.request-tabs .tab, .response-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 16 20;
+    -fx-font-weight: 500;
+    -fx-font-size: 15px;
+}
+
+.request-tabs .tab:selected, .response-tabs .tab:selected {
+    -fx-text-fill: #3b82f6;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 0 0 3 0;
+    -fx-background-color: #ffffff;
+    -fx-font-weight: 600;
+}
+
+.request-tabs .tab:hover, .response-tabs .tab:hover {
+    -fx-text-fill: #1e293b;
+    -fx-background-color: #f8fafc;
+}
+
+.request-tabs .tab-content-area, .response-tabs .tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20;
+    -fx-border-radius: 0 0 12 12;
+    -fx-background-radius: 0 0 12 12;
+}
+
+/* Text areas - čišći dizajn */
+.json-editor, .headers-editor, .json-viewer, .headers-viewer {
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 16;
+    -fx-font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+.json-editor:focused, .headers-editor:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.15), 6, 0, 0, 0);
+}
+
+.json-editor .content, .headers-editor .content {
+    -fx-background-color: #ffffff;
+    -fx-padding: 16;
+}
+
+.json-viewer {
+    -fx-background-color: #f8fafc;
+    -fx-control-inner-background: #f8fafc;
+    -fx-border-color: #e2e8f0;
+}
+
+.json-viewer .content {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 16;
+}
+
+.headers-viewer {
+    -fx-background-color: #f8fafc;
+    -fx-control-inner-background: #f8fafc;
+    -fx-border-color: #e2e8f0;
+}
+
+.headers-viewer .content {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 16;
+}
+
+/* Info label */
+.info-label {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 16;
+    -fx-font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+/* Footer - poboljšan dizajn sa većim fontom i levo poravnato */
+.footer {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0, 0, -2);
+}
+
+.footer-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-text-alignment: left;
+}
+
+/* Combo box popup */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 12, 0, 0, 4);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1e293b;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* Scroll bars */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #f1f5f9;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #94a3b8;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #64748b;
+}
+
+/* Dialog styling */
+.dialog-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dialog-pane .content {
+    -fx-background-color: #ffffff;
+    -fx-padding: 16;
+}
+
+.dialog-pane .button-bar {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 16;
+}
+
+/* Tooltip */
+.tooltip {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+/* Focus indicators */
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    .request-bar, .preset-bar, .action-bar {
+        -fx-padding: 8;
+    }
+    
+    .filter-button {
+        -fx-padding: 4 8;
+        -fx-font-size: 12px;
+    }
+    
+    .section-title {
+        -fx-font-size: 16px;
+    }
+}
