@@ -10,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import java.net.URL;
@@ -166,6 +165,8 @@ public class MainController implements Initializable {
 
             filterAll.getStyleClass().add("active");
             filterContainer.getChildren().addAll(filterAll, filterGet, filterPost, filterPut, filterDelete);
+            
+            filterPresets(currentFilter);
         }
     }
 
