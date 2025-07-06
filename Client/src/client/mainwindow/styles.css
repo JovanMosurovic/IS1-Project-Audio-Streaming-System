@@ -26,7 +26,7 @@
     -fx-alignment: CENTER_LEFT;
 }
 
-/* Method combo box - kompletan fix za prikaz teksta */
+/* Method combo box */
 .method-combo {
     -fx-background-color: #ffffff;
     -fx-border-color: #cbd5e1;
@@ -35,23 +35,30 @@
     -fx-background-radius: 6;
     -fx-font-weight: 600;
     -fx-font-size: 14px;
-    -fx-padding: 12 16;
+    -fx-padding: 10 16;
     -fx-min-height: 44px;
     -fx-pref-height: 44px;
     -fx-max-height: 44px;
-    -fx-text-fill: #1e293b;
 }
 
 .method-combo .list-cell {
-    -fx-padding: 8 12;
-    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
     -fx-font-weight: 600;
-    -fx-text-fill: inherit;
+    -fx-font-size: 14px;
+    -fx-padding: 0;
     -fx-background-color: transparent;
 }
 
+.method-combo .button-cell {
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+}
+
+/* Arrow button */
 .method-combo .arrow-button {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .method-combo .arrow-button .arrow {
@@ -62,47 +69,47 @@
     -fx-border-color: #94a3b8;
 }
 
+/* Method-specific styles */
 .method-combo.method-get {
     -fx-background-color: #dcfce7;
     -fx-border-color: #16a34a;
-    -fx-text-fill: #15803d;
 }
 
-.method-combo.method-get .list-cell {
+.method-combo.method-get .list-cell,
+.method-combo.method-get .button-cell {
     -fx-text-fill: #15803d;
 }
 
 .method-combo.method-post {
     -fx-background-color: #fef3c7;
     -fx-border-color: #f59e0b;
-    -fx-text-fill: #d97706;
 }
 
-.method-combo.method-post .list-cell {
+.method-combo.method-post .list-cell,
+.method-combo.method-post .button-cell {
     -fx-text-fill: #d97706;
 }
 
 .method-combo.method-put {
     -fx-background-color: #dbeafe;
     -fx-border-color: #3b82f6;
-    -fx-text-fill: #1d4ed8;
 }
 
-.method-combo.method-put .list-cell {
+.method-combo.method-put .list-cell,
+.method-combo.method-put .button-cell {
     -fx-text-fill: #1d4ed8;
 }
 
 .method-combo.method-delete {
     -fx-background-color: #fee2e2;
     -fx-border-color: #ef4444;
+}
+
+.method-combo.method-delete .list-cell,
+.method-combo.method-delete .button-cell {
     -fx-text-fill: #dc2626;
 }
 
-.method-combo.method-delete .list-cell {
-    -fx-text-fill: #dc2626;
-}
-
-/* URL input - jednaka visina kao method combo */
 .url-input {
     -fx-background-color: #ffffff;
     -fx-border-color: #cbd5e1;
@@ -126,7 +133,7 @@
     -fx-border-color: #94a3b8;
 }
 
-/* Send button - boldovan tekst */
+/* Send button */
 .send-button {
     -fx-background-color: #3b82f6;
     -fx-border-color: #3b82f6;
@@ -230,9 +237,16 @@
     -fx-border-color: #94a3b8;
 }
 
+.preset-combo:focused {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 4, 0, 0, 0);
+}
+
 .preset-combo:showing {
     -fx-border-color: #3b82f6;
-    -fx-border-width: 2;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.25), 4, 0, 0, 0);
 }
 
 /* Filter section */
@@ -380,7 +394,7 @@
     -fx-padding: 1;
 }
 
-/* Section styles - poboljšani dizajn */
+/* Section styles */
 .request-section, .response-section {
     -fx-background-color: #ffffff;
     -fx-border-color: #e2e8f0;
@@ -403,7 +417,7 @@
     -fx-font-size: 13px;
 }
 
-/* Tab panes - moderan dizajn bez sivog */
+/* Tab panes */
 .request-tabs, .response-tabs {
     -fx-background-color: #ffffff;
     -fx-border-radius: 0 0 12 12;
@@ -455,7 +469,7 @@
     -fx-background-radius: 0 0 12 12;
 }
 
-/* Text areas - čišći dizajn */
+/* Text areas */
 .json-editor, .headers-editor, .json-viewer, .headers-viewer {
     -fx-background-color: #ffffff;
     -fx-control-inner-background: #ffffff;
@@ -515,7 +529,7 @@
     -fx-text-fill: #64748b;
 }
 
-/* Footer - poboljšan dizajn sa većim fontom i levo poravnato */
+/* Footer */
 .footer {
     -fx-background-color: #ffffff;
     -fx-border-color: #e2e8f0;
