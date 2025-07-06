@@ -418,6 +418,14 @@
 }
 
 /* Tab panes */
+.tab-pane {
+    -fx-background-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-open-tab-animation: NONE;
+    -fx-close-tab-animation: NONE;
+}
+
 .request-tabs, .response-tabs {
     -fx-background-color: #ffffff;
     -fx-border-radius: 0 0 12 12;
