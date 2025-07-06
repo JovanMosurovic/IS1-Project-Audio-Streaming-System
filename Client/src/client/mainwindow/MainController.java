@@ -48,8 +48,6 @@ public class MainController implements Initializable {
     @FXML
     private HBox statusBox;
     @FXML
-    private Label createdByLabel;
-    @FXML
     private TabPane responseTabPane;
     @FXML
     private Button clearButton;
@@ -144,9 +142,6 @@ public class MainController implements Initializable {
         }
         if (statusBox != null) {
             statusBox.setAlignment(Pos.CENTER);
-        }
-        if (createdByLabel != null) {
-            createdByLabel.setText("IS1 Project Audio Streaming System Client v1.0.0 • © 2025 Jovan Mosurović\nSchool of Electrical Engineering, University of Belgrade");
         }
     }
 

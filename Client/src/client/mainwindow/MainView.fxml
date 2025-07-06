@@ -66,19 +66,19 @@
                             <VBox spacing="6">
                                 <Label text="JSON Body:" styleClass="field-label"/>
                                 <TextArea fx:id="requestBodyTextArea" 
-                                         styleClass="json-editor" 
-                                         prefHeight="200" 
-                                         wrapText="true"/>
+                                          styleClass="json-editor" 
+                                          prefHeight="200" 
+                                          wrapText="true"/>
                             </VBox>
                         </Tab>
                         <Tab text="Headers" closable="false">
                             <VBox spacing="6">
                                 <Label text="Headers (key: value):" styleClass="field-label"/>
                                 <TextArea fx:id="requestHeadersTextArea" 
-                                         styleClass="headers-editor" 
-                                         prefHeight="200" 
-                                         wrapText="true"
-                                         promptText="Content-Type: application/json&#10;Authorization: Bearer token"/>
+                                          styleClass="headers-editor" 
+                                          prefHeight="200" 
+                                          wrapText="true"
+                                          promptText="Content-Type: application/json&#10;Authorization: Bearer token"/>
                             </VBox>
                         </Tab>
                     </tabs>
@@ -97,19 +97,19 @@
                         <Tab text="Body" closable="false">
                             <VBox spacing="6">
                                 <TextArea fx:id="responseBodyTextArea" 
-                                         styleClass="json-viewer" 
-                                         editable="false" 
-                                         prefHeight="300" 
-                                         wrapText="true"/>
+                                          styleClass="json-viewer" 
+                                          editable="false" 
+                                          prefHeight="300" 
+                                          wrapText="true"/>
                             </VBox>
                         </Tab>
                         <Tab text="Headers" closable="false">
                             <VBox spacing="6">
                                 <TextArea fx:id="responseHeadersTextArea" 
-                                         styleClass="headers-viewer" 
-                                         editable="false" 
-                                         prefHeight="300" 
-                                         wrapText="true"/>
+                                          styleClass="headers-viewer" 
+                                          editable="false" 
+                                          prefHeight="300" 
+                                          wrapText="true"/>
                             </VBox>
                         </Tab>
                         <Tab text="Info" closable="false">
@@ -131,7 +131,9 @@
             <padding>
                 <Insets top="12" right="16" bottom="12" left="16"/>
             </padding>
-            <Label fx:id="createdByLabel" styleClass="footer-label"/>
+            <Label text="IS1 Project Audio Streaming System Client v1.0.0" styleClass="footer-label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="© 2025 Jovan Mosurović • School of Electrical Engineering, University of Belgrade" styleClass="footer-label"/>
         </HBox>
     </bottom>
 </BorderPane>
