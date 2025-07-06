@@ -3,7 +3,6 @@ package util;
 import entities.Korisnik;
 import entities.Mesto;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -12,7 +11,6 @@ import javax.persistence.TypedQuery;
 public class DatabaseUtil {
 
     private EntityManagerFactory emf;
-    private static final Logger LOGGER = Logger.getLogger(DatabaseUtil.class.getName());
 
     public DatabaseUtil() {
         try {
@@ -28,7 +26,6 @@ public class DatabaseUtil {
     public Object createMesto(String naziv) {
         EntityManager em = emf.createEntityManager();
         try {
-            System.out.println("[DEBUG] DatabaseUtil - Starting createMesto with new EntityManager");
 
             em.getTransaction().begin();
 
@@ -137,7 +134,6 @@ public class DatabaseUtil {
     public Mesto getMestoById(int mestoId) {
         EntityManager em = emf.createEntityManager();
         try {
-            System.out.println("[DEBUG] DatabaseUtil - Getting mesto by ID: " + mestoId);
 
             Mesto mesto = em.find(Mesto.class, mestoId);
             if (mesto != null) {
@@ -158,7 +154,6 @@ public class DatabaseUtil {
     public Korisnik getKorisnikById(int korisnikId) {
         EntityManager em = emf.createEntityManager();
         try {
-            System.out.println("[DEBUG] DatabaseUtil - Getting korisnik by ID: " + korisnikId);
 
             String jpql = "SELECT k FROM Korisnik k JOIN FETCH k.mestoId WHERE k.korisnikId = :korisnikId";
             TypedQuery<Korisnik> query = em.createQuery(jpql, Korisnik.class);
@@ -185,7 +180,6 @@ public class DatabaseUtil {
     public Object updateKorisnikEmail(int korisnikId, String newEmail) {
         EntityManager em = emf.createEntityManager();
         try {
-            System.out.println("[DEBUG] DatabaseUtil - Updating korisnik email for ID: " + korisnikId);
 
             em.getTransaction().begin();
 
@@ -230,7 +224,6 @@ public class DatabaseUtil {
     public Object updateKorisnikMesto(int korisnikId, int newMestoId) {
         EntityManager em = emf.createEntityManager();
         try {
-            System.out.println("[DEBUG] DatabaseUtil - Updating korisnik mesto for ID: " + korisnikId);
 
             em.getTransaction().begin();
 
