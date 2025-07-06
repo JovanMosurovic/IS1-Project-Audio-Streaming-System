@@ -13,7 +13,4 @@ public class Subsystem1Commands {
     public static final String UPDATE_KORISNIK_MESTO = "UPDATE_KORISNIK_MESTO";
     public static final String GET_ALL_KORISNICI = "GET_ALL_KORISNICI";
     public static final String GET_KORISNIK_BY_ID = "GET_KORISNIK_BY_ID";
-    
-    // Test commands
-    public static final String TEST_MESSAGE = "TEST_MESSAGE";
 }
