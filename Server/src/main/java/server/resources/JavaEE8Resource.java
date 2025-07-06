@@ -162,5 +162,103 @@ public class JavaEE8Resource {
     }
 
     // ============== SUBSYSTEM 3 ENDPOINTS ==============
-    //
+    @POST
+    @Path("paket")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createPaket(Map<String, Object> request) {
+        return subsystem3Util.createPaket(request);
+    }
+
+    @PUT
+    @Path("paket/{id}/cena")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePaketCena(@PathParam("id") int paketId, Map<String, Object> request) {
+        return subsystem3Util.updatePaketCena(paketId, request);
+    }
+
+    @POST
+    @Path("pretplata")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createPretplata(Map<String, Object> request) {
+        return subsystem3Util.createPretplata(request);
+    }
+
+    @POST
+    @Path("slusanje")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createSlusanje(Map<String, Object> request) {
+        return subsystem3Util.createSlusanje(request);
+    }
+
+    @POST
+    @Path("omiljeni")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addOmiljeniAudio(Map<String, Object> request) {
+        return subsystem3Util.addOmiljeniAudio(request);
+    }
+
+    @POST
+    @Path("ocena")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createOcena(Map<String, Object> request) {
+        return subsystem3Util.createOcena(request);
+    }
+
+    @PUT
+    @Path("ocena/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOcena(@PathParam("id") int ocenaId, Map<String, Object> request) {
+        return subsystem3Util.updateOcena(ocenaId, request);
+    }
+
+    @DELETE
+    @Path("ocena/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteOcena(@PathParam("id") int ocenaId, @QueryParam("korisnikId") int korisnikId) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("korisnikId", korisnikId);
+        return subsystem3Util.deleteOcena(ocenaId, request);
+    }
+
+    @GET
+    @Path("paket")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPaketi() {
+        return subsystem3Util.getAllPaketi();
+    }
+
+    @GET
+    @Path("pretplata/korisnik/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllPretplateForKorisnik(@PathParam("id") int korisnikId) {
+        return subsystem3Util.getAllPretplateForKorisnik(korisnikId);
+    }
+
+    @GET
+    @Path("slusanje/audio/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllSlusanjaForAudio(@PathParam("id") int audioId) {
+        return subsystem3Util.getAllSlusanjaForAudio(audioId);
+    }
+
+    @GET
+    @Path("ocena/audio/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllOceneForAudio(@PathParam("id") int audioId) {
+        return subsystem3Util.getAllOceneForAudio(audioId);
+    }
+
+    @GET
+    @Path("omiljeni/korisnik/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOmiljeniAudioForKorisnik(@PathParam("id") int korisnikId) {
+        return subsystem3Util.getOmiljeniAudioForKorisnik(korisnikId);
+    }
 }

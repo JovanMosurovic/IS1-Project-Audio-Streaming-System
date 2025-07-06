@@ -1,21 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package subsystem3;
 
-/**
- *
- * @author mosur
- */
 public class Main {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
     
+    public static void main(String[] args) {
+        System.out.println("[INFO] Starting Subsystem3 application");
+        
+        Subsystem3 subsystem = new Subsystem3();
+        subsystem.init();
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("[INFO] Shutting down " + subsystem.getSubsystemName());
+            subsystem.stop();
+        }));
+        
+        System.out.println("[INFO] " + subsystem.getSubsystemName() + " is starting...");
+        subsystem.start(); // This will block and listen for messages
+    }
 }
