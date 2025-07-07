@@ -622,7 +622,7 @@ public class MainController implements Initializable {
     }
 
     private Map<String, Object> parseJsonObject(String json) throws Exception {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
         json = json.substring(1, json.length() - 1).trim(); // For removing { i }
 
         if (json.isEmpty()) {
@@ -747,10 +747,7 @@ public class MainController implements Initializable {
         if (firstItem instanceof Map) {
             Set<String> allKeys = collectAllKeys(jsonArray);
 
-            List<String> keysList = new ArrayList<>(allKeys);
-            Collections.reverse(keysList);
-
-            for (String key : keysList) {
+            for (String key : allKeys) {
                 TableColumn<Map<String, Object>, String> column = new TableColumn<>(formatColumnName(key));
                 column.setCellValueFactory(data -> {
                     Object value = getNestedValue(data.getValue(), key);
@@ -812,11 +809,9 @@ public class MainController implements Initializable {
             Object value = entry.getValue();
 
             if (value instanceof Map) {
-                // Recursively flatten nested object
                 Map<String, Object> nested = flattenObject((Map<String, Object>) value, key);
                 flattened.putAll(nested);
             } else if (value instanceof List) {
-                // Handle arrays - convert to string representation
                 flattened.put(key, formatListValue((List<?>) value));
             } else {
                 flattened.put(key, value);
@@ -832,28 +827,26 @@ public class MainController implements Initializable {
         for (Object item : jsonArray) {
             if (item instanceof Map) {
                 Map<String, Object> itemMap = (Map<String, Object>) item;
-                // For keys in the original order as they appear in the JSON
-                for (String key : itemMap.keySet()) {
-                    addKeyWithNested(allKeys, itemMap, key, "");
-                }
+                addKeysInOriginalOrder(allKeys, itemMap, "");
             }
         }
 
         return allKeys;
     }
 
-    private void addKeyWithNested(Set<String> allKeys, Map<String, Object> obj, String key, String prefix) {
-        String fullKey = prefix.isEmpty() ? key : prefix + "." + key;
-        Object value = obj.get(key);
+    private void addKeysInOriginalOrder(Set<String> allKeys, Map<String, Object> obj, String prefix) {
+        for (Map.Entry<String, Object> entry : obj.entrySet()) {
+            String key = entry.getKey();
+            String fullKey = prefix.isEmpty() ? key : prefix + "." + key;
+            Object value = entry.getValue();
 
-        if (value instanceof Map) {
-            // Recursively add nested keys
-            Map<String, Object> nested = (Map<String, Object>) value;
-            for (String nestedKey : nested.keySet()) {
-                addKeyWithNested(allKeys, nested, nestedKey, fullKey);
+            if (value instanceof Map) {
+                addKeysInOriginalOrder(allKeys, (Map<String, Object>) value, fullKey);
+            } else if (value instanceof List) {
+                allKeys.add(fullKey);
+            } else {
+                allKeys.add(fullKey);
             }
-        } else {
-            allKeys.add(fullKey);
         }
     }
 
