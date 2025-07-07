@@ -9,11 +9,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import java.net.URL;
+import java.util.ArrayList;
+import javafx.beans.property.SimpleStringProperty;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -33,6 +42,10 @@ public class MainController implements Initializable {
     private TextArea requestHeadersTextArea;
     @FXML
     private TextArea responseBodyTextArea;
+    @FXML
+    private TableView<Map<String, Object>> responseTableView;
+    @FXML
+    private ScrollPane tableScrollPane;
     @FXML
     private TextArea responseHeadersTextArea;
     @FXML
@@ -352,12 +365,15 @@ public class MainController implements Initializable {
                 statusLabel.setText("Status: " + response.getStatusCode() + " " + getStatusText(response.getStatusCode()));
                 updateStatusStyling(response.getStatusCode());
                 String responseBody = response.getResponseBody();
-                
+
                 // If not JSON, present plain text
                 if (responseBody != null && !responseBody.trim().isEmpty()) {
                     responseBodyTextArea.setText(formatJsonString(responseBody));
+                    populateTable(responseBody);
                 } else {
                     responseBodyTextArea.setText("No response body");
+                    responseTableView.getItems().clear();
+                    responseTableView.getColumns().clear();
                 }
 
                 StringBuilder headersText = new StringBuilder();
@@ -524,4 +540,429 @@ public class MainController implements Initializable {
         }
         alert.showAndWait();
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Table for response">
+    
+    private void populateTable(String jsonString) {
+        if (jsonString == null || jsonString.trim().isEmpty()) {
+            responseTableView.getItems().clear();
+            responseTableView.getColumns().clear();
+            return;
+        }
+
+        try {
+            Object jsonObject = parseJson(jsonString.trim());
+
+            responseTableView.getItems().clear();
+            responseTableView.getColumns().clear();
+
+            if (jsonObject instanceof List) {
+                List<?> jsonArray = (List<?>) jsonObject;
+                if (!jsonArray.isEmpty()) {
+                    populateTableFromArray(jsonArray);
+                }
+            } else if (jsonObject instanceof Map) {
+                Map<String, Object> jsonMap = (Map<String, Object>) jsonObject;
+                populateTableFromObject(jsonMap);
+            }
+
+            Platform.runLater(() -> {
+                for (TableColumn<Map<String, Object>, ?> column : responseTableView.getColumns()) {
+                    column.setPrefWidth(calculateColumnWidth(column.getText()));
+                }
+            });
+
+        } catch (Exception e) {
+            responseTableView.getItems().clear();
+            responseTableView.getColumns().clear();
+
+            TableColumn<Map<String, Object>, String> errorColumn = new TableColumn<>("Error");
+            errorColumn.setCellValueFactory(data -> new SimpleStringProperty("Unable to parse JSON as table"));
+            errorColumn.setPrefWidth(400);
+            responseTableView.getColumns().add(errorColumn);
+
+            Map<String, Object> errorRow = new HashMap<>();
+            errorRow.put("Error", "JSON format not suitable for table display: " + e.getMessage());
+            responseTableView.getItems().add(errorRow);
+        }
+    }
+
+    private Object parseJson(String json) throws Exception {
+        json = json.trim();
+
+        if (json.startsWith("[")) {
+            return parseJsonArray(json);
+        } else if (json.startsWith("{")) {
+            return parseJsonObject(json);
+        } else {
+            throw new Exception("Invalid JSON format");
+        }
+    }
+
+    private List<Object> parseJsonArray(String json) throws Exception {
+        List<Object> result = new ArrayList<>();
+        json = json.substring(1, json.length() - 1).trim(); // For removing [ i ]
+
+        if (json.isEmpty()) {
+            return result;
+        }
+
+        List<String> elements = splitJsonElements(json);
+        for (String element : elements) {
+            element = element.trim();
+            if (element.startsWith("{")) {
+                result.add(parseJsonObject(element));
+            } else if (element.startsWith("[")) {
+                result.add(parseJsonArray(element));
+            } else {
+                result.add(parseJsonValue(element));
+            }
+        }
+
+        return result;
+    }
+
+    private Map<String, Object> parseJsonObject(String json) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        json = json.substring(1, json.length() - 1).trim(); // For removing { i }
+
+        if (json.isEmpty()) {
+            return result;
+        }
+
+        List<String> pairs = splitJsonElements(json);
+        for (String pair : pairs) {
+            int colonIndex = findColonIndex(pair);
+            if (colonIndex == -1) {
+                continue;
+            }
+
+            String key = pair.substring(0, colonIndex).trim();
+            String value = pair.substring(colonIndex + 1).trim();
+
+            if (key.startsWith("\"") && key.endsWith("\"")) {
+                key = key.substring(1, key.length() - 1);
+            }
+
+            if (value.startsWith("{")) {
+                result.put(key, parseJsonObject(value));
+            } else if (value.startsWith("[")) {
+                result.put(key, parseJsonArray(value));
+            } else {
+                result.put(key, parseJsonValue(value));
+            }
+        }
+
+        return result;
+    }
+
+    private List<String> splitJsonElements(String json) {
+        List<String> elements = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        int braceCount = 0;
+        int bracketCount = 0;
+        boolean inString = false;
+        char prev = 0;
+
+        for (char c : json.toCharArray()) {
+            if (c == '"' && prev != '\\') {
+                inString = !inString;
+            }
+
+            if (!inString) {
+                if (c == '{') {
+                    braceCount++;
+                } else if (c == '}') {
+                    braceCount--;
+                } else if (c == '[') {
+                    bracketCount++;
+                } else if (c == ']') {
+                    bracketCount--;
+                } else if (c == ',' && braceCount == 0 && bracketCount == 0) {
+                    elements.add(current.toString());
+                    current = new StringBuilder();
+                    prev = c;
+                    continue;
+                }
+            }
+
+            current.append(c);
+            prev = c;
+        }
+
+        if (current.length() > 0) {
+            elements.add(current.toString());
+        }
+
+        return elements;
+    }
+
+    private int findColonIndex(String pair) {
+        boolean inString = false;
+        char prev = 0;
+
+        for (int i = 0; i < pair.length(); i++) {
+            char c = pair.charAt(i);
+            if (c == '"' && prev != '\\') {
+                inString = !inString;
+            }
+            if (!inString && c == ':') {
+                return i;
+            }
+            prev = c;
+        }
+
+        return -1;
+    }
+
+    private Object parseJsonValue(String value) {
+        value = value.trim();
+
+        if (value.equals("null")) {
+            return null;
+        } else if (value.equals("true")) {
+            return true;
+        } else if (value.equals("false")) {
+            return false;
+        } else if (value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1);
+        } else {
+            try {
+                if (value.contains(".")) {
+                    return Double.parseDouble(value);
+                } else {
+                    return Integer.parseInt(value);
+                }
+            } catch (NumberFormatException e) {
+                return value;
+            }
+        }
+    }
+
+    private void populateTableFromArray(List<?> jsonArray) {
+        if (jsonArray.isEmpty()) {
+            return;
+        }
+
+        Object firstItem = jsonArray.get(0);
+        if (firstItem instanceof Map) {
+            Set<String> allKeys = collectAllKeys(jsonArray);
+
+            for (String key : allKeys) {
+                TableColumn<Map<String, Object>, String> column = new TableColumn<>(formatColumnName(key));
+                column.setCellValueFactory(data -> {
+                    Object value = getNestedValue(data.getValue(), key);
+                    return new SimpleStringProperty(formatCellValue(value));
+                });
+                column.setPrefWidth(calculateColumnWidth(key));
+                setupCellTooltips(column);
+                responseTableView.getColumns().add(column);
+            }
+
+            for (Object item : jsonArray) {
+                if (item instanceof Map) {
+                    Map<String, Object> flattenedRow = flattenObject((Map<String, Object>) item, "");
+                    responseTableView.getItems().add(flattenedRow);
+                }
+            }
+        } else {
+            TableColumn<Map<String, Object>, String> column = new TableColumn<>("Value");
+            column.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("value").toString()));
+            column.setPrefWidth(200);
+            setupCellTooltips(column);
+            responseTableView.getColumns().add(column);
+
+            for (Object item : jsonArray) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("value", item);
+                responseTableView.getItems().add(row);
+            }
+        }
+    }
+
+    private void populateTableFromObject(Map<String, Object> jsonMap) {
+        Map<String, Object> flattenedMap = flattenObject(jsonMap, "");
+
+        TableColumn<Map<String, Object>, String> keyColumn = new TableColumn<>("Property");
+        keyColumn.setCellValueFactory(data -> new SimpleStringProperty(formatColumnName(data.getValue().get("key").toString())));
+        keyColumn.setPrefWidth(200);
+        setupCellTooltips(keyColumn);
+
+        TableColumn<Map<String, Object>, String> valueColumn = new TableColumn<>("Value");
+        valueColumn.setCellValueFactory(data -> new SimpleStringProperty(formatCellValue(data.getValue().get("value"))));
+        valueColumn.setPrefWidth(300);
+        setupCellTooltips(valueColumn);
+
+        responseTableView.getColumns().addAll(keyColumn, valueColumn);
+
+        for (Map.Entry<String, Object> entry : flattenedMap.entrySet()) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("key", entry.getKey());
+            row.put("value", entry.getValue());
+            responseTableView.getItems().add(row);
+        }
+    }
+
+    private Map<String, Object> flattenObject(Map<String, Object> obj, String prefix) {
+        Map<String, Object> flattened = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry : obj.entrySet()) {
+            String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
+            Object value = entry.getValue();
+
+            if (value instanceof Map) {
+                // Recursively flatten nested object
+                Map<String, Object> nested = flattenObject((Map<String, Object>) value, key);
+                flattened.putAll(nested);
+            } else if (value instanceof List) {
+                // Handle arrays - convert to string representation
+                flattened.put(key, formatListValue((List<?>) value));
+            } else {
+                flattened.put(key, value);
+            }
+        }
+
+        return flattened;
+    }
+
+    private void setupCellTooltips(TableColumn<Map<String, Object>, String> column) {
+        column.setCellFactory(col -> {
+            TableCell<Map<String, Object>, String> cell = new TableCell<Map<String, Object>, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (empty || item == null) {
+                        setText(null);
+                        setTooltip(null);
+                    } else {
+                        setText(item);
+
+                        Platform.runLater(() -> {
+                            if (getText() != null && getFont() != null) {
+                                Text textNode = new Text(getText());
+                                textNode.setFont(getFont());
+                                double textWidth = textNode.getLayoutBounds().getWidth();
+                                double cellWidth = getWidth() - getPadding().getLeft() - getPadding().getRight();
+
+                                if (textWidth > cellWidth) {
+                                    Tooltip tooltip = new Tooltip(getText());
+                                    tooltip.getStyleClass().add("table-tooltip");
+                                    tooltip.setWrapText(true);
+                                    tooltip.setMaxWidth(400);
+                                    setTooltip(tooltip);
+                                } else {
+                                    setTooltip(null);
+                                }
+                            }
+                        });
+                    }
+                }
+            };
+
+            return cell;
+        });
+    }
+
+    private Set<String> collectAllKeys(List<?> jsonArray) {
+        Set<String> allKeys = new LinkedHashSet<>();
+
+        for (Object item : jsonArray) {
+            if (item instanceof Map) {
+                Map<String, Object> flattened = flattenObject((Map<String, Object>) item, "");
+                allKeys.addAll(flattened.keySet());
+            }
+        }
+
+        return allKeys;
+    }
+
+    private Object getNestedValue(Map<String, Object> obj, String key) {
+        Map<String, Object> flattened = flattenObject(obj, "");
+        return flattened.get(key);
+    }
+
+    private String formatColumnName(String key) {
+        return key.replace(".", " → ");
+    }
+
+    private String formatCellValue(Object value) {
+        if (value == null) {
+            return "null";
+        } else if (value instanceof String) {
+            String str = (String) value;
+            // Cut long strings
+            if (str.length() > 100) {
+                return str.substring(0, 97) + "...";
+            }
+            return str;
+        } else if (value instanceof Number) {
+            return value.toString();
+        } else if (value instanceof Boolean) {
+            return value.toString();
+        } else {
+            String str = value.toString();
+            if (str.length() > 100) {
+                return str.substring(0, 97) + "...";
+            }
+            return str;
+        }
+    }
+
+    private String formatListValue(List<?> list) {
+        if (list.isEmpty()) {
+            return "[]";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+
+        for (int i = 0; i < Math.min(list.size(), 3); i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            Object item = list.get(i);
+
+            if (item instanceof Map || item instanceof List) {
+                sb.append("{...}");
+            } else {
+                String str = formatCellValue(item);
+                if (str.length() > 20) {
+                    str = str.substring(0, 17) + "...";
+                }
+                sb.append(str);
+            }
+        }
+
+        if (list.size() > 3) {
+            sb.append(", ... (").append(list.size()).append(" items)");
+        }
+
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private double calculateColumnWidth(String columnName) {
+        int baseWidth = 80;
+        int charWidth = 8;
+
+        int nameWidth = columnName.length() * charWidth;
+
+        // Special widths for specific types of columns
+        if (columnName.toLowerCase().contains("id")) {
+            return Math.max(baseWidth, nameWidth + 20);
+        } else if (columnName.toLowerCase().contains("email")) {
+            return Math.max(180, nameWidth + 20);
+        } else if (columnName.toLowerCase().contains("datum") || columnName.toLowerCase().contains("time")) {
+            return Math.max(160, nameWidth + 20);
+        } else if (columnName.toLowerCase().contains("naziv") || columnName.toLowerCase().contains("ime")) {
+            return Math.max(140, nameWidth + 20);
+        } else if (columnName.toLowerCase().contains("cena") || columnName.toLowerCase().contains("price")) {
+            return Math.max(100, nameWidth + 20);
+        } else {
+            return Math.max(120, nameWidth + 20);
+        }
+    }
+
+    // </editor-fold>
 }

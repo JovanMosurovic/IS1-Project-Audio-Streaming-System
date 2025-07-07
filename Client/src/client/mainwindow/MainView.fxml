@@ -103,6 +103,18 @@
                                           wrapText="true"/>
                             </VBox>
                         </Tab>
+                        <Tab text="Table" closable="false">
+                            <VBox spacing="6">
+                                <ScrollPane fx:id="tableScrollPane" 
+                                            styleClass="table-viewer"
+                                            fitToWidth="true"
+                                            fitToHeight="true">
+                                    <TableView fx:id="responseTableView" 
+                                               styleClass="json-table"
+                                               prefHeight="300"/>
+                                </ScrollPane>
+                            </VBox>
+                        </Tab>
                         <Tab text="Headers" closable="false">
                             <VBox spacing="6">
                                 <TextArea fx:id="responseHeadersTextArea" 

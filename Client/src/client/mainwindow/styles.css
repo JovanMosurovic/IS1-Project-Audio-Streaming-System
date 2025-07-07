@@ -524,6 +524,96 @@
     -fx-padding: 16;
 }
 
+/* Table viewer styles */
+.table-viewer {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.json-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #e2e8f0;
+    -fx-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -fx-font-size: 13px;
+    -fx-column-resize-policy: CONSTRAINED_RESIZE_POLICY;
+}
+
+.json-table .column-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 1 1 0;
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: 600;
+    -fx-padding: 12 16;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.json-table .column-header .label {
+    -fx-font-weight: 600;
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+    -fx-text-overrun: ELLIPSIS;
+}
+
+.json-table .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1 0;
+}
+
+.json-table .table-row-cell:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.json-table .table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+    -fx-border-color: #3b82f6;
+}
+
+.json-table .table-cell {
+    -fx-text-fill: #1e293b;
+    -fx-padding: 8 12;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-text-overrun: ELLIPSIS;
+    -fx-wrap-text: false;
+}
+
+.json-table .table-cell:selected {
+    -fx-text-fill: #1e293b;
+    -fx-background-color: #dbeafe;
+}
+
+/* Tooltip */
+.tooltip {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+ /* Tooltip for long values */ 
+.json-table .table-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.json-table .table-column {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.json-table .filler {
+    -fx-background-color: #f8fafc;
+}
+
 /* Info label */
 .info-label {
     -fx-background-color: #f8fafc;
@@ -628,18 +718,6 @@
     -fx-border-color: #e2e8f0;
     -fx-border-width: 1 0 0 0;
     -fx-padding: 12 16;
-}
-
-/* Tooltip */
-.tooltip {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: #ffffff;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
-    -fx-padding: 6 8;
-    -fx-font-size: 12px;
-    -fx-font-weight: 500;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
 }
 
 /* Focus indicators */
