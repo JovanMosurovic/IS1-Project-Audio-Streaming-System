@@ -11,6 +11,7 @@ The client application itself is designed much like a specialized **API client t
 ## Table of Contents
 
 - [Project demo](#project-demo)
+  - [Example Logs from Subsystems](#example-logs-from-subsystems)
 - [System Overview](#system-overview)
   - [Client Application](#client-application)
   - [Central Server](#central-server)
@@ -26,6 +27,16 @@ The client application itself is designed much like a specialized **API client t
 https://github.com/user-attachments/assets/e1ec886d-d56a-418f-9da5-fb34a6f83210
 
 > **Note:** The demo showcases only some of the features of the project. <br />
+
+### Example Logs from Subsystems
+
+| Subsystem 1 | Subsystem 2 | Subsystem 3 |
+|-----------------------------|----------------------------|----------------------------|
+| ![Subsystem1_log](https://github.com/user-attachments/assets/14be54ad-9f0d-4662-a357-f3b3536b210f) | ![Subsystem2_log](https://github.com/user-attachments/assets/432e362c-3b5c-41f7-a4c4-44cdcfee327f) | ![Subsystem3_log](https://github.com/user-attachments/assets/b405fa3c-d532-4018-b3ae-9eb9fb2346a7) |
+
+> **Note:** These logs include requests shown in the demo as well as **additional example operations**.
+>
+> They were executed **after recording the demo**, so some **IDs or request parameters may differ** from the original video.
 
 ## System Overview
 
