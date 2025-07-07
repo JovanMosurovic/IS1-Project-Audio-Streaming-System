@@ -4,6 +4,7 @@ import java.net.URL;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Client extends Application {
@@ -24,6 +25,9 @@ public class Client extends Application {
             Scene scene = new Scene(loader.load());
 
             scene.getStylesheets().add(getClass().getResource("/client/mainwindow/styles.css").toExternalForm());
+
+            Image icon = new Image(getClass().getResourceAsStream("/resources/appIcon.png"));
+            primaryStage.getIcons().add(icon);
 
             primaryStage.setTitle("Audio Streaming System - API Client");
             primaryStage.setScene(scene);

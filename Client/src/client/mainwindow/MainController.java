@@ -12,14 +12,16 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import javafx.beans.property.SimpleStringProperty;
 import java.util.List;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -44,8 +46,6 @@ public class MainController implements Initializable {
     private TextArea responseBodyTextArea;
     @FXML
     private TableView<Map<String, Object>> responseTableView;
-    @FXML
-    private ScrollPane tableScrollPane;
     @FXML
     private TextArea responseHeadersTextArea;
     @FXML
@@ -542,7 +542,6 @@ public class MainController implements Initializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Table for response">
-    
     private void populateTable(String jsonString) {
         if (jsonString == null || jsonString.trim().isEmpty()) {
             responseTableView.getItems().clear();
@@ -748,14 +747,17 @@ public class MainController implements Initializable {
         if (firstItem instanceof Map) {
             Set<String> allKeys = collectAllKeys(jsonArray);
 
-            for (String key : allKeys) {
+            List<String> keysList = new ArrayList<>(allKeys);
+            Collections.reverse(keysList);
+
+            for (String key : keysList) {
                 TableColumn<Map<String, Object>, String> column = new TableColumn<>(formatColumnName(key));
                 column.setCellValueFactory(data -> {
                     Object value = getNestedValue(data.getValue(), key);
                     return new SimpleStringProperty(formatCellValue(value));
                 });
                 column.setPrefWidth(calculateColumnWidth(key));
-                setupCellTooltips(column);
+                column.setCellFactory(col -> new SelectableTextCell<>());
                 responseTableView.getColumns().add(column);
             }
 
@@ -769,7 +771,6 @@ public class MainController implements Initializable {
             TableColumn<Map<String, Object>, String> column = new TableColumn<>("Value");
             column.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("value").toString()));
             column.setPrefWidth(200);
-            setupCellTooltips(column);
             responseTableView.getColumns().add(column);
 
             for (Object item : jsonArray) {
@@ -786,12 +787,12 @@ public class MainController implements Initializable {
         TableColumn<Map<String, Object>, String> keyColumn = new TableColumn<>("Property");
         keyColumn.setCellValueFactory(data -> new SimpleStringProperty(formatColumnName(data.getValue().get("key").toString())));
         keyColumn.setPrefWidth(200);
-        setupCellTooltips(keyColumn);
+        keyColumn.setCellFactory(col -> new SelectableTextCell<>());
 
         TableColumn<Map<String, Object>, String> valueColumn = new TableColumn<>("Value");
         valueColumn.setCellValueFactory(data -> new SimpleStringProperty(formatCellValue(data.getValue().get("value"))));
         valueColumn.setPrefWidth(300);
-        setupCellTooltips(valueColumn);
+        valueColumn.setCellFactory(col -> new SelectableTextCell<>());
 
         responseTableView.getColumns().addAll(keyColumn, valueColumn);
 
@@ -804,7 +805,7 @@ public class MainController implements Initializable {
     }
 
     private Map<String, Object> flattenObject(Map<String, Object> obj, String prefix) {
-        Map<String, Object> flattened = new HashMap<>();
+        Map<String, Object> flattened = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> entry : obj.entrySet()) {
             String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
@@ -825,56 +826,35 @@ public class MainController implements Initializable {
         return flattened;
     }
 
-    private void setupCellTooltips(TableColumn<Map<String, Object>, String> column) {
-        column.setCellFactory(col -> {
-            TableCell<Map<String, Object>, String> cell = new TableCell<Map<String, Object>, String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-
-                    if (empty || item == null) {
-                        setText(null);
-                        setTooltip(null);
-                    } else {
-                        setText(item);
-
-                        Platform.runLater(() -> {
-                            if (getText() != null && getFont() != null) {
-                                Text textNode = new Text(getText());
-                                textNode.setFont(getFont());
-                                double textWidth = textNode.getLayoutBounds().getWidth();
-                                double cellWidth = getWidth() - getPadding().getLeft() - getPadding().getRight();
-
-                                if (textWidth > cellWidth) {
-                                    Tooltip tooltip = new Tooltip(getText());
-                                    tooltip.getStyleClass().add("table-tooltip");
-                                    tooltip.setWrapText(true);
-                                    tooltip.setMaxWidth(400);
-                                    setTooltip(tooltip);
-                                } else {
-                                    setTooltip(null);
-                                }
-                            }
-                        });
-                    }
-                }
-            };
-
-            return cell;
-        });
-    }
-
     private Set<String> collectAllKeys(List<?> jsonArray) {
         Set<String> allKeys = new LinkedHashSet<>();
 
         for (Object item : jsonArray) {
             if (item instanceof Map) {
-                Map<String, Object> flattened = flattenObject((Map<String, Object>) item, "");
-                allKeys.addAll(flattened.keySet());
+                Map<String, Object> itemMap = (Map<String, Object>) item;
+                // For keys in the original order as they appear in the JSON
+                for (String key : itemMap.keySet()) {
+                    addKeyWithNested(allKeys, itemMap, key, "");
+                }
             }
         }
 
         return allKeys;
+    }
+
+    private void addKeyWithNested(Set<String> allKeys, Map<String, Object> obj, String key, String prefix) {
+        String fullKey = prefix.isEmpty() ? key : prefix + "." + key;
+        Object value = obj.get(key);
+
+        if (value instanceof Map) {
+            // Recursively add nested keys
+            Map<String, Object> nested = (Map<String, Object>) value;
+            for (String nestedKey : nested.keySet()) {
+                addKeyWithNested(allKeys, nested, nestedKey, fullKey);
+            }
+        } else {
+            allKeys.add(fullKey);
+        }
     }
 
     private Object getNestedValue(Map<String, Object> obj, String key) {
@@ -949,12 +929,10 @@ public class MainController implements Initializable {
         int nameWidth = columnName.length() * charWidth;
 
         // Special widths for specific types of columns
-        if (columnName.toLowerCase().contains("id")) {
-            return Math.max(baseWidth, nameWidth + 20);
-        } else if (columnName.toLowerCase().contains("email")) {
+        if (columnName.toLowerCase().contains("email")) {
             return Math.max(180, nameWidth + 20);
         } else if (columnName.toLowerCase().contains("datum") || columnName.toLowerCase().contains("time")) {
-            return Math.max(160, nameWidth + 20);
+            return Math.max(190, nameWidth + 20);
         } else if (columnName.toLowerCase().contains("naziv") || columnName.toLowerCase().contains("ime")) {
             return Math.max(140, nameWidth + 20);
         } else if (columnName.toLowerCase().contains("cena") || columnName.toLowerCase().contains("price")) {
@@ -965,4 +943,103 @@ public class MainController implements Initializable {
     }
 
     // </editor-fold>
+    public class SelectableTextCell<S> extends TableCell<S, String> {
+
+        private TextField textField;
+
+        public SelectableTextCell() {
+            setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !isEmpty()) {
+                    startEdit();
+                }
+            });
+        }
+
+        @Override
+        public void startEdit() {
+            if (!isEmpty()) {
+                super.startEdit();
+                createTextField();
+                setText(null);
+                setGraphic(textField);
+                textField.selectAll();
+                textField.requestFocus();
+                setTooltip(null);
+            }
+        }
+
+        @Override
+        public void cancelEdit() {
+            super.cancelEdit();
+            setText(getItem());
+            setGraphic(null);
+            updateTooltip(getItem());
+        }
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                if (isEditing()) {
+                    if (textField != null) {
+                        textField.setText(item);
+                    }
+                    setText(null);
+                    setGraphic(textField);
+                    setTooltip(null);
+                } else {
+                    setText(item);
+                    setGraphic(null);
+                    updateTooltip(item);
+                }
+            }
+        }
+
+        private void updateTooltip(String text) {
+            Platform.runLater(() -> {
+                if (isEditing() || text == null || text.isEmpty() || getFont() == null) {
+                    setTooltip(null);
+                    return;
+                }
+                Text textNode = new Text(text);
+                textNode.setFont(getFont());
+                double textWidth = textNode.getLayoutBounds().getWidth();
+                double cellWidth = getWidth() - getPadding().getLeft() - getPadding().getRight() - 2;
+                if (textWidth > cellWidth) {
+                    Tooltip tooltip = new Tooltip(text);
+                    tooltip.setWrapText(true);
+                    tooltip.setMaxWidth(500);
+                    tooltip.getStyleClass().add("table-tooltip");
+                    setTooltip(tooltip);
+                } else {
+                    setTooltip(null);
+                }
+            });
+        }
+
+        private void createTextField() {
+            textField = new TextField(getItem());
+            textField.setEditable(false); // read-only
+            textField.setFocusTraversable(true);
+            textField.setStyle("-fx-opacity: 1; -fx-background-color: #fffbe7;");
+
+            textField.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.ENTER) {
+                    cancelEdit();
+                }
+            });
+
+            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    cancelEdit();
+                }
+            });
+
+            Platform.runLater(() -> textField.selectAll());
+        }
+    }
 }
