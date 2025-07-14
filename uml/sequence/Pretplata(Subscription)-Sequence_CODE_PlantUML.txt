@@ -1,0 +1,65 @@
+@startuml
+participant "Client" as C
+participant "Client App" as CA
+participant "Server" as S
+participant "Subsystem3" as S3
+participant "Database" as DB
+
+C -> CA: Create Pretplata
+CA -> S: POST /pretplata\n{korisnikId, paketId, placenaCena}
+
+S -> S: Validate request data
+alt validation fails
+    S -> CA: HTTP 400 Error
+    CA -> C: Validation Error Message
+else validation success
+    S -> S3: JMS: "CREATE_PRETPLATA:korisnikId:paketId:placenaCena"
+    
+    S3 -> DB: Begin transaction
+    S3 -> DB: Find Korisnik by ID
+    
+    alt korisnik not found
+        DB -> S3: null
+        S3 -> S: JMS: DatabaseError(404)
+        S -> CA: HTTP 404 Error
+        CA -> C: "Korisnik not found"
+    else korisnik found
+        S3 -> DB: Find Paket by ID
+        
+        alt paket not found
+            DB -> S3: null
+            S3 -> S: JMS: DatabaseError(404)
+            S -> CA: HTTP 404 Error
+            CA -> C: "Paket not found"
+        else paket found
+            S3 -> DB: Check for active pretplata
+            
+            alt active pretplata exists
+                DB -> S3: count > 0
+                S3 -> S: JMS: DatabaseError(409)
+                S -> CA: HTTP 409 Error
+                CA -> C: "Already has active pretplata"
+            else no active pretplata
+                S3 -> DB: Create and persist Pretplata
+                S3 -> DB: Commit transaction
+                
+                alt database error
+                    DB -> S3: Exception
+                    S3 -> DB: Rollback transaction
+                    S3 -> S: JMS: DatabaseError(500)
+                    S -> CA: HTTP 500 Error
+                    CA -> C: "Database error"
+                else success
+                    DB -> S3: Pretplata created
+                    S3 -> S: JMS: Pretplata object
+                    S -> CA: HTTP 201 Success
+                    CA -> C: "Pretplata created successfully"
+                end
+            end
+        end
+    end
+    note over S3, DB: Finally block always executes
+    S3 -> DB: Close EntityManager
+end
+
+@enduml
