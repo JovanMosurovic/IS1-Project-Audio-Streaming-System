@@ -31,7 +31,7 @@ CREATE TABLE `audio_kategorija` (
   KEY `kategorija_id` (`kategorija_id`),
   CONSTRAINT `audio_kategorija_ibfk_1` FOREIGN KEY (`audio_id`) REFERENCES `audio_snimak` (`audio_id`) ON DELETE CASCADE,
   CONSTRAINT `audio_kategorija_ibfk_2` FOREIGN KEY (`kategorija_id`) REFERENCES `kategorija` (`kategorija_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `audio_kategorija` (
 
 LOCK TABLES `audio_kategorija` WRITE;
 /*!40000 ALTER TABLE `audio_kategorija` DISABLE KEYS */;
-INSERT INTO `audio_kategorija` VALUES (4,4,4);
+INSERT INTO `audio_kategorija` VALUES (1,1,1),(2,2,2),(3,3,3),(4,4,4);
 /*!40000 ALTER TABLE `audio_kategorija` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,7 +61,7 @@ CREATE TABLE `audio_snimak` (
   KEY `idx_audio_vlasnik` (`vlasnik_id`),
   CONSTRAINT `audio_snimak_ibfk_1` FOREIGN KEY (`vlasnik_id`) REFERENCES `korisnik` (`korisnik_id`) ON DELETE CASCADE,
   CONSTRAINT `audio_snimak_chk_1` CHECK ((`trajanje` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `audio_snimak` (
 
 LOCK TABLES `audio_snimak` WRITE;
 /*!40000 ALTER TABLE `audio_snimak` DISABLE KEYS */;
-INSERT INTO `audio_snimak` VALUES (4,'Uvod u programiranje',2700,4,'2024-02-04 14:45:00'),(5,'Moja nova pesma',240,1,'2025-07-06 14:56:58');
+INSERT INTO `audio_snimak` VALUES (1,'Moja prva pesma',180,1,'2024-02-01 12:00:00'),(2,'Istorija Srbije podcast',1800,2,'2024-02-02 15:30:00'),(3,'Gospodar prstenova - Poglavlje 1',3600,3,'2024-02-03 10:00:00'),(4,'Uvod u programiranje',2700,4,'2024-02-04 14:45:00');
 /*!40000 ALTER TABLE `audio_snimak` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -95,7 +95,7 @@ CREATE TABLE `istorija_slusanja` (
   CONSTRAINT `istorija_slusanja_ibfk_2` FOREIGN KEY (`audio_id`) REFERENCES `audio_snimak` (`audio_id`) ON DELETE CASCADE,
   CONSTRAINT `istorija_slusanja_chk_1` CHECK ((`pocetni_sekund` >= 0)),
   CONSTRAINT `istorija_slusanja_chk_2` CHECK ((`broj_odslusanih_sekundi` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -104,7 +104,7 @@ CREATE TABLE `istorija_slusanja` (
 
 LOCK TABLES `istorija_slusanja` WRITE;
 /*!40000 ALTER TABLE `istorija_slusanja` DISABLE KEYS */;
-INSERT INTO `istorija_slusanja` VALUES (4,4,4,'2024-02-06 14:00:00',0,2700);
+INSERT INTO `istorija_slusanja` VALUES (1,1,2,'2024-02-05 18:00:00',0,900),(2,2,3,'2024-02-05 20:00:00',0,1800),(3,3,1,'2024-02-06 10:00:00',0,180),(4,4,4,'2024-02-06 14:00:00',0,2700);
 /*!40000 ALTER TABLE `istorija_slusanja` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,7 +120,7 @@ CREATE TABLE `kategorija` (
   `naziv` varchar(100) NOT NULL,
   PRIMARY KEY (`kategorija_id`),
   UNIQUE KEY `naziv` (`naziv`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +129,7 @@ CREATE TABLE `kategorija` (
 
 LOCK TABLES `kategorija` WRITE;
 /*!40000 ALTER TABLE `kategorija` DISABLE KEYS */;
-INSERT INTO `kategorija` VALUES (3,'Audio knjiga'),(5,'Elektronska muzika'),(1,'Muzika'),(2,'Podkast'),(4,'Predavanje'),(6,'Rep');
+INSERT INTO `kategorija` VALUES (3,'Audio knjiga'),(1,'Muzika'),(2,'Podkast'),(4,'Predavanje');
 /*!40000 ALTER TABLE `kategorija` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +152,7 @@ CREATE TABLE `korisnik` (
   KEY `mesto_id` (`mesto_id`),
   KEY `idx_korisnik_email` (`email`),
   CONSTRAINT `korisnik_ibfk_1` FOREIGN KEY (`mesto_id`) REFERENCES `mesto` (`mesto_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,7 +161,7 @@ CREATE TABLE `korisnik` (
 
 LOCK TABLES `korisnik` WRITE;
 /*!40000 ALTER TABLE `korisnik` DISABLE KEYS */;
-INSERT INTO `korisnik` VALUES (1,'Marko Markovic','marko.novi@email.com',1995,'MUSKI',1),(2,'Ana Anic','novi.email@test.testa',1998,'ZENSKI',2),(3,'Jovan Jovanovic','jovan@email.com',1990,'MUSKI',3),(4,'Mila Milic','mila@email.com',1993,'ZENSKI',1),(5,'Jovan','Test',2002,'MUSKI',2),(23,'Petar Petrovic','petar@email.com',1992,'MUSKI',1);
+INSERT INTO `korisnik` VALUES (1,'Marko Markovic','marko@email.com',1995,'MUSKI',1),(2,'Ana Anic','ana@email.com',1998,'ZENSKI',2),(3,'Jovan Jovanovic','jovan@email.com',1990,'MUSKI',3),(4,'Mila Milic','mila@email.com',1993,'ZENSKI',1);
 /*!40000 ALTER TABLE `korisnik` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -176,7 +176,7 @@ CREATE TABLE `mesto` (
   `mesto_id` int NOT NULL AUTO_INCREMENT,
   `naziv` varchar(100) NOT NULL,
   PRIMARY KEY (`mesto_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +185,7 @@ CREATE TABLE `mesto` (
 
 LOCK TABLES `mesto` WRITE;
 /*!40000 ALTER TABLE `mesto` DISABLE KEYS */;
-INSERT INTO `mesto` VALUES (1,'Beograd'),(2,'Toronto'),(3,'London'),(4,'Kragujevac'),(5,'novoMesto'),(73,'Test for mesto'),(74,'Test for mesto');
+INSERT INTO `mesto` VALUES (1,'Beograd'),(2,'Toronto'),(3,'London'),(4,'Kragujevac');
 /*!40000 ALTER TABLE `mesto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -208,7 +208,7 @@ CREATE TABLE `ocena` (
   CONSTRAINT `ocena_ibfk_1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`korisnik_id`) ON DELETE CASCADE,
   CONSTRAINT `ocena_ibfk_2` FOREIGN KEY (`audio_id`) REFERENCES `audio_snimak` (`audio_id`) ON DELETE CASCADE,
   CONSTRAINT `ocena_chk_1` CHECK ((`vrednost` between 1 and 5))
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +217,7 @@ CREATE TABLE `ocena` (
 
 LOCK TABLES `ocena` WRITE;
 /*!40000 ALTER TABLE `ocena` DISABLE KEYS */;
-INSERT INTO `ocena` VALUES (4,4,4,4,'2024-02-06 15:00:00');
+INSERT INTO `ocena` VALUES (1,1,2,5,'2024-02-05 19:00:00'),(2,2,3,4,'2024-02-05 21:00:00'),(3,3,1,5,'2024-02-06 11:00:00'),(4,4,4,4,'2024-02-06 15:00:00');
 /*!40000 ALTER TABLE `ocena` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,7 +237,7 @@ CREATE TABLE `omiljeni_audio` (
   KEY `audio_id` (`audio_id`),
   CONSTRAINT `omiljeni_audio_ibfk_1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`korisnik_id`) ON DELETE CASCADE,
   CONSTRAINT `omiljeni_audio_ibfk_2` FOREIGN KEY (`audio_id`) REFERENCES `audio_snimak` (`audio_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -246,7 +246,7 @@ CREATE TABLE `omiljeni_audio` (
 
 LOCK TABLES `omiljeni_audio` WRITE;
 /*!40000 ALTER TABLE `omiljeni_audio` DISABLE KEYS */;
-INSERT INTO `omiljeni_audio` VALUES (4,4,4);
+INSERT INTO `omiljeni_audio` VALUES (1,1,2),(2,2,3),(3,3,1),(4,4,4);
 /*!40000 ALTER TABLE `omiljeni_audio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +262,7 @@ CREATE TABLE `paket` (
   `trenutna_cena` decimal(10,2) NOT NULL,
   PRIMARY KEY (`paket_id`),
   CONSTRAINT `paket_chk_1` CHECK ((`trenutna_cena` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -271,7 +271,7 @@ CREATE TABLE `paket` (
 
 LOCK TABLES `paket` WRITE;
 /*!40000 ALTER TABLE `paket` DISABLE KEYS */;
-INSERT INTO `paket` VALUES (1,1099.99),(2,1999.99),(3,2999.99),(4,1299.99);
+INSERT INTO `paket` VALUES (1,999.99),(2,1999.99),(3,2999.99);
 /*!40000 ALTER TABLE `paket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -295,7 +295,7 @@ CREATE TABLE `pretplata` (
   CONSTRAINT `pretplata_ibfk_1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`korisnik_id`) ON DELETE CASCADE,
   CONSTRAINT `pretplata_ibfk_2` FOREIGN KEY (`paket_id`) REFERENCES `paket` (`paket_id`) ON DELETE CASCADE,
   CONSTRAINT `pretplata_chk_1` CHECK ((`placena_cena` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -304,7 +304,7 @@ CREATE TABLE `pretplata` (
 
 LOCK TABLES `pretplata` WRITE;
 /*!40000 ALTER TABLE `pretplata` DISABLE KEYS */;
-INSERT INTO `pretplata` VALUES (1,1,1,'2024-01-01 00:00:00',999.99),(2,2,2,'2024-01-15 00:00:00',1999.99),(3,3,3,'2024-02-01 00:00:00',2999.99),(4,4,1,'2025-07-06 17:02:28',999.99);
+INSERT INTO `pretplata` VALUES (1,1,1,'2024-01-01 00:00:00',999.99),(2,2,2,'2024-01-15 00:00:00',1999.99),(3,3,3,'2024-02-01 00:00:00',2999.99);
 /*!40000 ALTER TABLE `pretplata` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -317,4 +317,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-10 14:17:39
+-- Dump completed on 2025-08-16 20:50:22
